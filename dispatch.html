@@ -439,6 +439,8 @@
 <div class="sync-bar">
   <span class="sync-status" id="sync-status">尚未同步 — 點「從 Sheets 匯入」拉取最新發包記錄</span>
   <button class="btn-sync" id="sync-btn" onclick="startSync()">⬇ 從 Sheets 匯入</button>
+  <button class="btn-sync" style="background:#1a2a1a;color:#4affb4;border-color:#2a442a" onclick="document.getElementById('csv-input').click()">📂 匯入 CSV</button>
+  <input type="file" id="csv-input" accept=".csv" style="display:none" onchange="importCSV(this)">
   <button class="btn-sync" style="background:#1a1a2a;color:#7ab4ff;border-color:#2a2a44" onclick="openColMapModal()">⚙ 欄位設定</button>
 </div>
 
@@ -852,8 +854,13 @@ async function startSync() {
       const name = (r['name'] || r['合作內容'] || r['稿件名稱'] || '').trim();
       if (!name) { skipped++; continue; }
 
-      // Skip duplicates (match by name + designer)
-      if (tasks.some(t => t.name === name && t.designer === resolveDesigner((r['designer'] || r['設計師'] || '').trim()))) { skipped++; continue; }
+      // Build a stable unique key: designer + name + date (cross-browser safe)
+      const designerRawForKey = (r['designer'] || r['設計師'] || '').trim();
+      const dateRawForKey = (r['date'] || r['發包日期'] || r['deadline'] || r['交期'] || '').trim();
+      const uniqueKey = `${resolveDesigner(designerRawForKey)}|${name}|${dateRawForKey}`;
+
+      // Skip duplicates using uniqueKey
+      if (tasks.some(t => t.uniqueKey === uniqueKey)) { skipped++; continue; }
 
       const designerRaw = (r['designer'] || r['設計師'] || '').trim();
       const designerId  = resolveDesigner(designerRaw);
@@ -908,6 +915,7 @@ async function startSync() {
         note:      noteRaw,
         createdAt: dateRaw || today(),
         fromSheets: true,
+        uniqueKey,
       });
       added++;
     }
@@ -928,6 +936,100 @@ async function startSync() {
     btn.disabled = false;
     btn.innerHTML = '⬇ 從 Sheets 匯入';
   }
+}
+
+// ─── CSV IMPORT ──────────────────────────────────────────────────────────────
+function importCSV(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const text = e.target.result;
+      const rows = parseCSV(text);
+      if (rows.length < 2) { toast('✗ CSV 沒有資料'); return; }
+
+      // 找「發包日期」所在的列當 header
+      let added = 0, skipped = 0;
+      let currentDesignerName = '';
+
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const first = (row[0] || '').trim();
+
+        // 偵測設計師名稱列（只有一個非空欄且不是日期也不是「發包日期」）
+        if (first && !first.includes('發包日期') && !first.match(/^\d{4}/) && row.filter(c=>c.trim()).length === 1) {
+          currentDesignerName = first;
+          continue;
+        }
+
+        // 跳過 header 列
+        if (first === '發包日期') continue;
+
+        // 有發包日期或有合作內容才處理
+        const nameVal = (row[2] || '').trim();
+        if (!nameVal) { skipped++; continue; }
+
+        const dateVal     = first;
+        const typeVal     = (row[1] || '').trim();
+        const priceVal    = (row[3] || '').replace(/[$,，＄]/g,'').trim();
+        const qtyVal      = (row[4] || '').replace(/[^\d]/g,'').trim();
+
+        const designerId  = resolveDesigner(currentDesignerName);
+
+        // Normalize type
+        let type = '上架包';
+        if (typeVal.includes('官網') || typeVal.includes('Banner')) type = '官網Banner';
+        else if (typeVal.includes('網購')) type = '網購Banner';
+        else if (typeVal.includes('×5') || typeVal.includes('X5') || typeVal.includes('x5')) type = '上架包×5';
+
+        const uniqueKey = `${designerId}|${nameVal}|${dateVal}`;
+        if (tasks.some(t => t.uniqueKey === uniqueKey)) { skipped++; continue; }
+
+        let price = parseInt(priceVal) || 0;
+        if (!price && designerId) {
+          const d = DESIGNERS.find(x => x.id === designerId);
+          price = d ? (d.rates[type] || 2000) : 2000;
+        }
+        if (!price) price = 2000;
+
+        // Parse date
+        let deadline = '';
+        const m = dateVal.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+        if (m) deadline = `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
+
+        tasks.push({
+          id: uid(),
+          name: nameVal,
+          designer: designerId,
+          type,
+          qty: parseInt(qtyVal) || 1,
+          unitprice: price,
+          priority: 'mid',
+          status: 'pending',
+          revisions: 0,
+          progress: 0,
+          deadline,
+          note: '',
+          createdAt: deadline || today(),
+          fromSheets: true,
+          uniqueKey,
+        });
+        added++;
+      }
+
+      save(); renderAll();
+      const now = new Date().toLocaleTimeString('zh-TW', {hour:'2-digit', minute:'2-digit'});
+      document.getElementById('sync-status').className = 'sync-status ok';
+      document.getElementById('sync-status').textContent = `✓ CSV 匯入完成 ${now} — 新增 ${added} 筆，略過 ${skipped} 筆`;
+      toast(`✓ CSV 匯入 ${added} 筆新任務`);
+    } catch(err) {
+      toast('✗ CSV 解析失敗：' + err.message);
+      console.error(err);
+    }
+    input.value = ''; // reset so same file can be imported again
+  };
+  reader.readAsText(file, 'UTF-8');
 }
 
 // ─── COLUMN MAP MODAL ────────────────────────────────────────────────────────
