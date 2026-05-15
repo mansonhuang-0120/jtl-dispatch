@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>杰拓設計發包管理系統</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+
+  :root {
+    --bg: #0d0d0d;
+    --surface: #161616;
+    --surface2: #1e1e1e;
+    --border: #2a2a2a;
+    --accent: #e8ff4a;
+    --accent2: #4affb4;
+    --accent3: #ff6b4a;
+    --text: #f0f0f0;
+    --muted: #666;
+    --danger: #ff4a6b;
+    --warning: #ffaa4a;
+    --success: #4affb4;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans TC', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .header-stats {
+    display: flex;
+    gap: 24px;
+  }
+  .stat-pill {
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .stat-pill span { color: var(--text); font-weight: 700; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 0 28px;
+    background: var(--bg);
+  }
+  .tab-btn {
+    padding: 10px 20px;
+    border: none;
+    background: none;
+    color: var(--muted);
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.15s;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* MAIN LAYOUT */
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: calc(100vh - 97px);
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+  }
+  .sidebar-section {
+    padding: 0 16px;
+    margin-bottom: 28px;
+  }
+  .sidebar-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .designer-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 3px;
+    border: 1px solid transparent;
+  }
+  .designer-item:hover { background: var(--surface2); }
+  .designer-item.active { background: var(--surface2); border-color: var(--border); }
+  .designer-avatar {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .designer-info { flex: 1; min-width: 0; }
+  .designer-name { font-size: 13px; font-weight: 500; }
+  .designer-sub { font-size: 10px; color: var(--muted); margin-top: 1px; }
+  .designer-count {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 5px;
+  }
+
+  .filter-btn {
+    display: flex; align-items: center; gap: 8px;
+    width: 100%; padding: 7px 10px;
+    border-radius: 6px; border: none; background: none;
+    color: var(--muted);
+    font-family: 'Noto Sans TC', sans-serif; font-size: 13px;
+    cursor: pointer; text-align: left;
+    transition: all 0.15s; margin-bottom: 2px;
+  }
+  .filter-btn:hover { background: var(--surface2); color: var(--text); }
+  .filter-btn.active { background: var(--surface2); color: var(--text); }
+  .filter-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .filter-btn-count { margin-left: auto; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); }
+
+  /* MAIN CONTENT */
+  .main { padding: 22px 26px; overflow-y: auto; }
+
+  /* SUMMARY CARDS */
+  .summary-row {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 12px; margin-bottom: 20px;
+  }
+  .summary-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 14px;
+  }
+  .summary-card-label { font-size: 10px; color: var(--muted); margin-bottom: 6px; font-family: 'Space Mono', monospace; letter-spacing: 0.05em; }
+  .summary-card-value { font-size: 24px; font-weight: 700; font-family: 'Space Mono', monospace; line-height: 1; }
+  .summary-card-sub { font-size: 10px; color: var(--muted); margin-top: 5px; }
+
+  /* TABLE */
+  .table-wrapper {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden;
+  }
+  .table-header-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 13px 18px; border-bottom: 1px solid var(--border);
+  }
+  .table-header-row h2 { font-size: 13px; font-weight: 600; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { border-bottom: 1px solid var(--border); }
+  thead th {
+    text-align: left; padding: 9px 14px;
+    font-size: 10px; font-family: 'Space Mono', monospace;
+    letter-spacing: 0.1em; color: var(--muted);
+    text-transform: uppercase; font-weight: 400;
+  }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+  td { padding: 10px 14px; vertical-align: middle; }
+
+  /* STATUS BADGES */
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 8px; border-radius: 4px;
+    font-size: 11px; font-weight: 500;
+    font-family: 'Space Mono', monospace;
+  }
+  .badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+  .badge-pending   { background: #1e1e1e; color: #aaa; border: 1px solid #333; }
+  .badge-inprogress{ background: #1a2a1a; color: var(--success); border: 1px solid #2a442a; }
+  .badge-review    { background: #2a1a00; color: var(--warning); border: 1px solid #442a00; }
+  .badge-revision  { background: #1a1a2a; color: #7ab4ff; border: 1px solid #2a2a44; }
+  .badge-done      { background: #0a1a0a; color: #4aff8a; border: 1px solid #1a3a1a; }
+  .badge-overdue   { background: #2a0a0a; color: var(--danger); border: 1px solid #440a0a; }
+
+  .priority { display: inline-flex; align-items: center; font-size: 11px; font-family: 'Space Mono', monospace; gap: 4px; }
+  .priority-high { color: var(--danger); }
+  .priority-mid  { color: var(--warning); }
+  .priority-low  { color: var(--muted); }
+
+  .designer-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }
+  .chip-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .deadline { font-family: 'Space Mono', monospace; font-size: 11px; }
+  .deadline.overdue  { color: var(--danger); }
+  .deadline.due-soon { color: var(--warning); }
+  .deadline.ok       { color: var(--muted); }
+
+  /* REVISION COUNTER */
+  .rev-counter {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: 'Space Mono', monospace; font-size: 11px;
+  }
+  .rev-dot { width: 6px; height: 6px; border-radius: 50%; background: #7ab4ff; }
+
+  /* BUTTONS */
+  .btn {
+    padding: 7px 14px; border-radius: 6px; border: none;
+    font-family: 'Noto Sans TC', sans-serif; font-size: 13px;
+    cursor: pointer; transition: all 0.15s; font-weight: 500;
+  }
+  .btn-primary { background: var(--accent); color: #000; }
+  .btn-primary:hover { background: #d4eb00; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: #444; }
+  .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 4px 9px; font-size: 11px; }
+  .btn-danger:hover { background: var(--danger); color: #fff; }
+  .btn-sm { padding: 4px 9px; font-size: 11px; border-radius: 4px; }
+  .btn-rev { background: #1a1a2a; color: #7ab4ff; border: 1px solid #2a2a44; padding: 3px 7px; font-size: 12px; border-radius: 4px; cursor: pointer; line-height:1; }
+  .btn-rev:hover { background: #2a2a44; }
+  .btn-rev-minus { color: #ff9a7a; border-color: #44221a; background: #2a1a1a; }
+  .btn-rev-minus:hover { background: #3a2a2a; }
+
+  /* INLINE STATUS SELECT */
+  .inline-status-select {
+    background: #1e1e1e; border: 1px solid #333;
+    border-radius: 4px; color: var(--text);
+    font-family: 'Space Mono', monospace; font-size: 11px;
+    padding: 3px 6px; cursor: pointer; outline: none;
+    transition: border-color 0.15s;
+  }
+  .inline-status-select:hover { border-color: #555; }
+  .inline-status-select:focus { border-color: var(--accent); }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75); z-index: 200;
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 26px;
+    width: 520px; max-width: 95vw; max-height: 90vh; overflow-y: auto;
+  }
+  .modal h2 { font-size: 16px; font-weight: 700; margin-bottom: 18px; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; margin-bottom: 13px; }
+  .form-full { grid-column: 1 / -1; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group label { font-size: 10px; color: var(--muted); font-family: 'Space Mono', monospace; letter-spacing: 0.08em; }
+  .form-group input, .form-group select, .form-group textarea {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; color: var(--text);
+    font-family: 'Noto Sans TC', sans-serif; font-size: 13px;
+    padding: 8px 11px; outline: none; transition: border-color 0.15s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+  .form-group select option { background: #1e1e1e; }
+  .form-group textarea { resize: vertical; min-height: 68px; }
+
+  .modal-footer {
+    display: flex; justify-content: flex-end; gap: 10px;
+    margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border);
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar-outer { height: 4px; background: var(--border); border-radius: 2px; width: 90px; overflow: hidden; }
+  .progress-bar-inner { height: 100%; border-radius: 2px; background: var(--accent2); transition: width 0.3s; }
+
+  /* SEARCH */
+  .search-input {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; color: var(--text);
+    font-family: 'Noto Sans TC', sans-serif; font-size: 13px;
+    padding: 7px 11px; outline: none; width: 180px; transition: border-color 0.15s, width 0.2s;
+  }
+  .search-input:focus { border-color: var(--accent); width: 230px; }
+  .search-input::placeholder { color: var(--muted); }
+
+  /* EMPTY STATE */
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 13px; }
+  .empty-state .icon { font-size: 28px; margin-bottom: 10px; }
+
+  /* TOAST */
+  #toast {
+    position: fixed; bottom: 22px; right: 22px;
+    background: var(--accent); color: #000;
+    padding: 9px 16px; border-radius: 6px; font-size: 13px; font-weight: 600;
+    transform: translateY(60px); opacity: 0; transition: all 0.25s; z-index: 999;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ── COST TAB ── */
+  .cost-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px; }
+  .cost-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px;
+  }
+  .cost-card-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--border);
+  }
+  .cost-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700;
+  }
+  .cost-name { font-size: 14px; font-weight: 600; }
+  .cost-role { font-size: 11px; color: var(--muted); }
+  .cost-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 12px; border-bottom: 1px solid #1e1e1e; }
+  .cost-row:last-child { border-bottom: none; }
+  .cost-row-label { color: var(--muted); }
+  .cost-row-value { font-family: 'Space Mono', monospace; font-weight: 600; }
+  .cost-total {
+    margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .cost-total-label { font-size: 11px; color: var(--muted); font-family: 'Space Mono', monospace; }
+  .cost-total-value { font-size: 18px; font-weight: 700; font-family: 'Space Mono', monospace; color: var(--accent); }
+
+  .cost-summary-bar {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 22px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .cost-summary-label { font-size: 12px; color: var(--muted); font-family: 'Space Mono', monospace; }
+  .cost-summary-value { font-size: 28px; font-weight: 700; font-family: 'Space Mono', monospace; color: var(--accent); }
+
+  /* RATE TABLE */
+  .rate-table-wrapper { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 20px; }
+  .rate-table-title { padding: 13px 18px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 600; }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+  /* TAB CONTENT */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* SYNC */
+  .sync-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 28px;
+    background: #0d1a0d;
+    border-bottom: 1px solid #1a2a1a;
+    font-size: 11px; font-family: 'Space Mono', monospace;
+  }
+  .sync-status { color: var(--muted); flex: 1; }
+  .sync-status.ok    { color: var(--success); }
+  .sync-status.err   { color: var(--danger); }
+  .sync-status.loading { color: var(--warning); }
+  .btn-sync {
+    background: #1a2a1a; color: var(--success);
+    border: 1px solid #2a442a; padding: 4px 12px;
+    border-radius: 4px; font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .btn-sync:hover { background: #2a442a; }
+  .btn-sync:disabled { opacity: 0.4; cursor: not-allowed; }
+  .sync-spinner { display: inline-block; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* COLUMN MAP MODAL */
+  .colmap-modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px;
+    width: 580px; max-width: 95vw; max-height: 85vh; overflow-y: auto;
+  }
+  .colmap-row {
+    display: grid; grid-template-columns: 160px 1fr;
+    gap: 10px; align-items: center; margin-bottom: 10px;
+  }
+  .colmap-label { font-size: 12px; color: var(--muted); font-family: 'Space Mono', monospace; }
+  .colmap-select {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; color: var(--text); padding: 6px 10px;
+    font-family: 'Noto Sans TC', sans-serif; font-size: 13px; outline: none;
+  }
+  .colmap-select:focus { border-color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">DISPATCH // 杰拓設計發包管理</div>
+  <div class="header-stats">
+    <div class="stat-pill">任務總數 <span id="hdr-total">0</span></div>
+    <div class="stat-pill">進行中 <span id="hdr-inprogress">0</span></div>
+    <div class="stat-pill">逾期警示 <span id="hdr-overdue" style="color:var(--danger)">0</span></div>
+    <div class="stat-pill">本月費用 <span id="hdr-cost" style="color:var(--accent)">$0</span></div>
+  </div>
+</header>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('tasks',this)">📋 任務看板</button>
+  <button class="tab-btn" onclick="switchTab('cost',this)">💰 費用總覽</button>
+  <button class="tab-btn" onclick="switchTab('rates',this)">📊 報價規格</button>
+</div>
+
+<!-- SYNC BAR -->
+<div class="sync-bar">
+  <span class="sync-status" id="sync-status">尚未同步 — 點「從 Sheets 匯入」拉取最新發包記錄</span>
+  <button class="btn-sync" id="sync-btn" onclick="startSync()">⬇ 從 Sheets 匯入</button>
+  <button class="btn-sync" style="background:#1a1a2a;color:#7ab4ff;border-color:#2a2a44" onclick="openColMapModal()">⚙ 欄位設定</button>
+</div>
+
+<!-- ════════════════ TAB: TASKS ════════════════ -->
+<div id="tab-tasks" class="tab-content active">
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">設計師</div>
+      <div id="designer-list"></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">篩選狀態</div>
+      <button class="filter-btn active" data-filter="all" onclick="setFilter('all',this)">
+        <span class="filter-dot" style="background:#555"></span>全部任務
+        <span class="filter-btn-count" id="fc-all">0</span>
+      </button>
+      <button class="filter-btn" data-filter="pending" onclick="setFilter('pending',this)">
+        <span class="filter-dot" style="background:#aaa"></span>待開始
+        <span class="filter-btn-count" id="fc-pending">0</span>
+      </button>
+      <button class="filter-btn" data-filter="inprogress" onclick="setFilter('inprogress',this)">
+        <span class="filter-dot" style="background:var(--success)"></span>進行中
+        <span class="filter-btn-count" id="fc-inprogress">0</span>
+      </button>
+      <button class="filter-btn" data-filter="review" onclick="setFilter('review',this)">
+        <span class="filter-dot" style="background:var(--warning)"></span>待審核
+        <span class="filter-btn-count" id="fc-review">0</span>
+      </button>
+      <button class="filter-btn" data-filter="revision" onclick="setFilter('revision',this)">
+        <span class="filter-dot" style="background:#7ab4ff"></span>修改中
+        <span class="filter-btn-count" id="fc-revision">0</span>
+      </button>
+      <button class="filter-btn" data-filter="done" onclick="setFilter('done',this)">
+        <span class="filter-dot" style="background:#4aff8a"></span>已完成
+        <span class="filter-btn-count" id="fc-done">0</span>
+      </button>
+      <button class="filter-btn" data-filter="overdue" onclick="setFilter('overdue',this)">
+        <span class="filter-dot" style="background:var(--danger)"></span>逾期
+        <span class="filter-btn-count" id="fc-overdue">0</span>
+      </button>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">近期交期</div>
+      <div id="upcoming-list" style="font-size:11px;color:var(--muted);line-height:1.8;"></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="summary-row">
+      <div class="summary-card">
+        <div class="summary-card-label">總任務數</div>
+        <div class="summary-card-value" id="s-total" style="color:var(--text)">0</div>
+        <div class="summary-card-sub">所有發包項目</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">總件數</div>
+        <div class="summary-card-value" id="s-qty" style="color:var(--accent)">0</div>
+        <div class="summary-card-sub">件</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">本週到期</div>
+        <div class="summary-card-value" id="s-week" style="color:var(--warning)">0</div>
+        <div class="summary-card-sub">任務項目</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">完成率</div>
+        <div class="summary-card-value" id="s-rate" style="color:var(--success)">0%</div>
+        <div class="summary-card-sub">已完成 / 全部</div>
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <div class="table-header-row">
+        <h2 id="table-title">全部任務</h2>
+        <div style="display:flex;gap:10px;align-items:center">
+          <input class="search-input" placeholder="搜尋任務..." id="search-input" oninput="renderTable()">
+          <button class="btn btn-primary" onclick="openModal()">＋ 新增任務</button>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>任務名稱</th>
+            <th>設計師</th>
+            <th>品項類型</th>
+            <th>數量</th>
+            <th>優先度</th>
+            <th>狀態</th>
+            <th>修改次數</th>
+            <th>交期</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="task-tbody"></tbody>
+      </table>
+      <div id="empty-state" class="empty-state" style="display:none">
+        <div class="icon">📭</div>
+        <div>目前沒有符合條件的任務</div>
+      </div>
+    </div>
+  </main>
+</div>
+</div>
+
+<!-- ════════════════ TAB: COST ════════════════ -->
+<div id="tab-cost" class="tab-content">
+<div class="main" style="max-width:1100px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+    <h2 style="font-size:16px;font-weight:700">本月費用總覽</h2>
+    <span style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace" id="cost-month"></span>
+  </div>
+
+  <div class="cost-summary-bar" style="margin-bottom:22px">
+    <div>
+      <div class="cost-summary-label">本月設計費合計</div>
+      <div class="cost-summary-value" id="cost-grand-total">$0</div>
+    </div>
+    <div style="text-align:right">
+      <div class="cost-summary-label">已完成任務</div>
+      <div style="font-size:22px;font-weight:700;font-family:'Space Mono',monospace;color:var(--success)" id="cost-done-count">0 件</div>
+    </div>
+  </div>
+
+  <div class="cost-grid" id="cost-cards"></div>
+</div>
+</div>
+
+<!-- ════════════════ TAB: RATES ════════════════ -->
+<div id="tab-rates" class="tab-content">
+<div class="main" style="max-width:900px">
+  <h2 style="font-size:16px;font-weight:700;margin-bottom:18px">各設計師報價規格</h2>
+  <div class="rate-table-wrapper">
+    <div class="rate-table-title">報價彙整（截至 2026/05）</div>
+    <table>
+      <thead>
+        <tr>
+          <th>設計師</th>
+          <th>上架包 ×1</th>
+          <th>上架包 ×5</th>
+          <th>官網Banner (1視覺×4尺寸)</th>
+          <th>網購Banner (1視覺×13尺寸)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="designer-chip"><span class="chip-dot" style="background:#e8ff4a"></span>Amber</span></td><td>$2,000</td><td>$1,800</td><td>$1,200</td><td>—</td></tr>
+        <tr><td><span class="designer-chip"><span class="chip-dot" style="background:#4affb4"></span>Emma</span></td><td>$2,000</td><td>待報價</td><td>—</td><td>—</td></tr>
+        <tr><td><span class="designer-chip"><span class="chip-dot" style="background:#ff6b4a"></span>大P</span></td><td>$2,000</td><td>待報價</td><td>$2,000</td><td>待報價</td></tr>
+        <tr><td><span class="designer-chip"><span class="chip-dot" style="background:#b47aff"></span>楊雅淳</span></td><td>—</td><td>—</td><td>$2,000</td><td>待報價</td></tr>
+        <tr><td><span class="designer-chip"><span class="chip-dot" style="background:#ff7ab4"></span>Vivian</span></td><td>—</td><td>—</td><td>$2,000</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="rate-table-wrapper" style="margin-top:20px">
+    <div class="rate-table-title">官網 Banner 尺寸規格</div>
+    <table>
+      <thead><tr><th>NO</th><th>平台</th><th>尺寸</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>PChome</td><td>1200×400</td></tr>
+        <tr><td>2</td><td></td><td>1080×1920</td></tr>
+        <tr><td>3</td><td></td><td>1200×628 (要LOGO)</td></tr>
+        <tr><td>4</td><td></td><td>1040×1040</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="rate-table-wrapper" style="margin-top:20px">
+    <div class="rate-table-title">網購 Banner 尺寸規格（13尺寸）</div>
+    <table>
+      <thead><tr><th>NO</th><th>平台</th><th>尺寸 / 限制</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>PChome</td><td>1080×1920 &lt;20MB</td></tr>
+        <tr><td>2</td><td></td><td>1644×604 &lt;395KB</td></tr>
+        <tr><td>3</td><td></td><td>462×462 &lt;225KB</td></tr>
+        <tr><td>4</td><td>Yahoo</td><td>1200×600 &lt;300K</td></tr>
+        <tr><td>5</td><td></td><td>950×464 &lt;200K</td></tr>
+        <tr><td>6</td><td></td><td>960×450 &lt;200K</td></tr>
+        <tr><td>7</td><td></td><td>1080×345 &lt;200K</td></tr>
+        <tr><td>8</td><td>博客來</td><td>240×240</td></tr>
+        <tr><td>9</td><td></td><td>950×250</td></tr>
+        <tr><td>10</td><td></td><td>621×312</td></tr>
+        <tr><td>11</td><td>MOMO</td><td>818×370 &lt;150K</td></tr>
+        <tr><td>12</td><td></td><td>1000×300 &lt;150K</td></tr>
+        <tr><td>13</td><td></td><td>852×426 &lt;150K</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h2 id="modal-title">新增發包任務</h2>
+    <div class="form-grid">
+      <div class="form-group form-full">
+        <label>任務名稱</label>
+        <input type="text" id="f-name" placeholder="e.g. Spigen S26 系列主圖">
+      </div>
+      <div class="form-group">
+        <label>指派設計師</label>
+        <select id="f-designer">
+          <option value="">選擇設計師</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>品項類型</label>
+        <select id="f-type">
+          <option value="上架包">上架包</option>
+          <option value="官網Banner">官網Banner</option>
+          <option value="網購Banner">網購Banner</option>
+          <option value="社群貼文">社群貼文</option>
+          <option value="包裝設計">包裝設計</option>
+          <option value="說明圖">說明圖</option>
+          <option value="Logo">Logo</option>
+          <option value="電商頁面">電商頁面</option>
+          <option value="影片素材">影片素材</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>數量（件）</label>
+        <input type="number" id="f-qty" min="1" value="1">
+      </div>
+      <div class="form-group">
+        <label>單價（元）</label>
+        <input type="number" id="f-unitprice" min="0" value="2000" placeholder="自動帶入，可修改">
+      </div>
+      <div class="form-group">
+        <label>優先度</label>
+        <select id="f-priority">
+          <option value="high">🔴 高</option>
+          <option value="mid" selected>🟡 中</option>
+          <option value="low">⚪ 低</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>狀態</label>
+        <select id="f-status">
+          <option value="pending">待開始</option>
+          <option value="inprogress">進行中</option>
+          <option value="review">待審核</option>
+          <option value="revision">修改中</option>
+          <option value="done">已完成</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>進度 (%)</label>
+        <input type="number" id="f-progress" min="0" max="100" value="0">
+      </div>
+      <div class="form-group">
+        <label>交期</label>
+        <input type="date" id="f-deadline">
+      </div>
+      <div class="form-group form-full">
+        <label>備註</label>
+        <textarea id="f-note" placeholder="尺寸規格、參考資料、特別要求..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveTask()">儲存任務</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- COLUMN MAP MODAL -->
+<div class="modal-overlay" id="colmap-overlay">
+  <div class="colmap-modal">
+    <h2 style="font-size:16px;font-weight:700;margin-bottom:6px">⚙ Google Sheets 欄位對應設定</h2>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:18px;font-family:'Space Mono',monospace">設定你試算表的欄位名稱對應，系統才能正確讀取資料</p>
+
+    <div style="margin-bottom:14px">
+      <div class="colmap-row">
+        <span class="colmap-label">試算表 ID</span>
+        <input id="cfg-sheet-id" class="colmap-select" placeholder="貼上試算表ID（網址中間那段）" style="font-size:11px">
+      </div>
+      <div class="colmap-row">
+        <span class="colmap-label">工作表 GID</span>
+        <input id="cfg-gid" class="colmap-select" placeholder="預設 0（第一個工作表）" style="font-size:11px">
+      </div>
+    </div>
+
+    <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px">
+      <p style="font-size:11px;color:var(--muted);margin-bottom:10px;font-family:'Space Mono',monospace">↓ 把你試算表的欄位名稱貼入（可留空表示沒有這欄）</p>
+      <div class="colmap-row"><span class="colmap-label">任務名稱</span><input id="col-name" class="colmap-select" placeholder="例：稿件名稱 / 任務"></div>
+      <div class="colmap-row"><span class="colmap-label">設計師</span><input id="col-designer" class="colmap-select" placeholder="例：設計師 / Designer"></div>
+      <div class="colmap-row"><span class="colmap-label">類型</span><input id="col-type" class="colmap-select" placeholder="例：類型 / 品項"></div>
+      <div class="colmap-row"><span class="colmap-label">數量</span><input id="col-qty" class="colmap-select" placeholder="例：數量 / 件數"></div>
+      <div class="colmap-row"><span class="colmap-label">單價</span><input id="col-unitprice" class="colmap-select" placeholder="例：單價 / 報價"></div>
+      <div class="colmap-row"><span class="colmap-label">優先度</span><input id="col-priority" class="colmap-select" placeholder="例：優先度（可留空）"></div>
+      <div class="colmap-row"><span class="colmap-label">狀態</span><input id="col-status" class="colmap-select" placeholder="例：狀態 / 進度"></div>
+      <div class="colmap-row"><span class="colmap-label">交期</span><input id="col-deadline" class="colmap-select" placeholder="例：交期 / 截止日"></div>
+      <div class="colmap-row"><span class="colmap-label">備註</span><input id="col-note" class="colmap-select" placeholder="例：備註 / Note"></div>
+    </div>
+
+    <div style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:16px;background:#1a1a1a;border-radius:6px;padding:10px">
+      💡 設計師欄位的值需對應到系統名稱（Amber, Emma, 大P, 楊雅淳, Vivian）或其縮寫（AMB, EMM, DAP, YAC, VIV）
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--border);padding-top:14px">
+      <button class="btn btn-secondary" onclick="closeColMapModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveColMap()">儲存設定</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── GOOGLE SHEETS SYNC CONFIG ───────────────────────────────────────────────
+const DEFAULT_CONFIG = {
+  sheetId: '1b-8zzwSx8HJH1PW_yreghBViTyfnVemtHVwxM1lfF-8',
+  gid: '0',
+  cols: {
+    name:      '稿件名稱',
+    designer:  '設計師',
+    type:      '類型',
+    qty:       '數量',
+    unitprice: '單價',
+    priority:  '優先度',
+    status:    '狀態',
+    deadline:  '交期',
+    note:      '備註',
+  }
+};
+
+let syncConfig = JSON.parse(localStorage.getItem('jtl_sync_config') || 'null') || DEFAULT_CONFIG;
+
+// Designer name aliases (試算表裡可能寫中文名或英文)
+const DESIGNER_ALIASES = {
+  'amber': 'AMB', 'AMB': 'AMB',
+  'emma':  'EMM', 'EMM': 'EMM',
+  '大p':  'DAP', '大P': 'DAP', 'DAP': 'DAP',
+  '楊雅淳': 'YAC', 'YAC': 'YAC',
+  'vivian': 'VIV', 'VIV': 'VIV',
+};
+
+// Status text → internal key mapping
+const STATUS_ALIASES = {
+  '待開始': 'pending',   '待接單': 'pending',   'pending': 'pending',
+  '進行中': 'inprogress','製稿中': 'inprogress','inprogress': 'inprogress',
+  '待審核': 'review',    'review': 'review',
+  '修改中': 'revision',  'revision': 'revision',
+  '已完成': 'done',      '完稿': 'done',         'done': 'done',
+};
+
+function resolveDesigner(raw) {
+  if (!raw) return '';
+  const key = raw.trim();
+  return DESIGNER_ALIASES[key] || DESIGNER_ALIASES[key.toLowerCase()] || '';
+}
+function resolveStatus(raw) {
+  if (!raw) return 'pending';
+  return STATUS_ALIASES[raw.trim()] || 'pending';
+}
+function resolvePriority(raw) {
+  if (!raw) return 'mid';
+  const s = raw.trim();
+  if (s.includes('高') || s.toLowerCase() === 'high') return 'high';
+  if (s.includes('低') || s.toLowerCase() === 'low')  return 'low';
+  return 'mid';
+}
+
+// Parse CSV (handles quoted fields with commas)
+function parseCSV(text) {
+  const rows = [];
+  const lines = text.split(/\r?\n/);
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    const cols = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') { inQ = !inQ; }
+      else if (c === ',' && !inQ) { cols.push(cur); cur = ''; }
+      else { cur += c; }
+    }
+    cols.push(cur);
+    rows.push(cols);
+  }
+  return rows;
+}
+
+// ─── APPS SCRIPT WEB APP URL ─────────────────────────────────────────────────
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOAgt7vzd-EzHjU5mzk1OXiykKtls-VM424Noie0fj9htdYXVUfTnAMe72z97CfkQM7A/exec';
+
+async function startSync() {
+  const btn = document.getElementById('sync-btn');
+  const status = document.getElementById('sync-status');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="sync-spinner">↻</span> 同步中...';
+  status.className = 'sync-status loading';
+  status.textContent = '連線 Google Sheets 中...';
+
+  try {
+    const resp = await fetch(APPS_SCRIPT_URL);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const json = await resp.json();
+    if (!json.ok) throw new Error('Apps Script 回傳錯誤');
+
+    const rows = json.rows || [];
+    if (rows.length === 0) throw new Error('試算表沒有資料');
+
+    let added = 0, skipped = 0;
+
+    for (const r of rows) {
+      const name = (r['name'] || r['合作內容'] || r['稿件名稱'] || '').trim();
+      if (!name) { skipped++; continue; }
+
+      // Skip duplicates (match by name + designer)
+      if (tasks.some(t => t.name === name && t.designer === resolveDesigner((r['designer'] || r['設計師'] || '').trim()))) { skipped++; continue; }
+
+      const designerRaw = (r['designer'] || r['設計師'] || '').trim();
+      const designerId  = resolveDesigner(designerRaw);
+
+      const typeRaw  = (r['type'] || r['合作類型'] || r['類型'] || '上架包').trim();
+      // Normalize type
+      let typeVal = '上架包';
+      if (typeRaw.includes('官網') || typeRaw.includes('Banner')) typeVal = '官網Banner';
+      else if (typeRaw.includes('網購')) typeVal = '網購Banner';
+      else if (typeRaw.includes('上架')) typeVal = typeRaw.includes('5') || typeRaw.includes('×5') ? '上架包×5' : '上架包';
+      else typeVal = typeRaw || '上架包';
+
+      const qtyRaw   = (r['qty'] || r['數量'] || '1').replace(/[^\d]/g, '');
+      const qtyVal   = parseInt(qtyRaw) || 1;
+
+      const priceRaw = (r['unitprice'] || r['單價'] || '').replace(/[$,，＄]/g, '').trim();
+      let finalPrice = parseInt(priceRaw) || 0;
+      if (!finalPrice && designerId) {
+        const d = DESIGNERS.find(x => x.id === designerId);
+        finalPrice = d ? (d.rates[typeVal] || d.rates['上架包'] || 2000) : 2000;
+      }
+      if (!finalPrice) finalPrice = 2000;
+
+      // Parse deadline / date
+      const dateRaw = (r['date'] || r['deadline'] || r['發包日期'] || r['交期'] || '').trim();
+      let deadline = '';
+      if (dateRaw) {
+        const m1 = dateRaw.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+        const m2 = dateRaw.match(/(\d{1,2})[\/\-](\d{1,2})$/);
+        if (m1) deadline = `${m1[1]}-${m1[2].padStart(2,'0')}-${m1[3].padStart(2,'0')}`;
+        else if (m2) {
+          const yr = new Date().getFullYear();
+          deadline = `${yr}-${m2[1].padStart(2,'0')}-${m2[2].padStart(2,'0')}`;
+        }
+      }
+
+      const statusRaw = (r['status'] || r['狀態'] || '').trim();
+      const noteRaw   = (r['note']   || r['備註'] || '').trim();
+
+      tasks.push({
+        id:        uid(),
+        name,
+        designer:  designerId,
+        type:      typeVal,
+        qty:       qtyVal,
+        unitprice: finalPrice,
+        priority:  'mid',
+        status:    resolveStatus(statusRaw),
+        revisions: 0,
+        progress:  0,
+        deadline,
+        note:      noteRaw,
+        createdAt: dateRaw || today(),
+        fromSheets: true,
+      });
+      added++;
+    }
+
+    save();
+    renderAll();
+    const now = new Date().toLocaleTimeString('zh-TW', {hour:'2-digit', minute:'2-digit'});
+    status.className = 'sync-status ok';
+    status.textContent = `✓ 同步完成 ${now} — 新增 ${added} 筆，略過 ${skipped} 筆`;
+    toast(`✓ 從 Sheets 匯入 ${added} 筆新任務`);
+
+  } catch (err) {
+    status.className = 'sync-status err';
+    status.textContent = `✗ 同步失敗：${err.message}`;
+    toast('✗ 同步失敗，請稍後再試');
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '⬇ 從 Sheets 匯入';
+  }
+}
+
+// ─── COLUMN MAP MODAL ────────────────────────────────────────────────────────
+function openColMapModal() {
+  document.getElementById('cfg-sheet-id').value = syncConfig.sheetId || '';
+  document.getElementById('cfg-gid').value      = syncConfig.gid     || '0';
+  const c = syncConfig.cols;
+  document.getElementById('col-name').value      = c.name      || '';
+  document.getElementById('col-designer').value  = c.designer  || '';
+  document.getElementById('col-type').value      = c.type      || '';
+  document.getElementById('col-qty').value       = c.qty       || '';
+  document.getElementById('col-unitprice').value = c.unitprice || '';
+  document.getElementById('col-priority').value  = c.priority  || '';
+  document.getElementById('col-status').value    = c.status    || '';
+  document.getElementById('col-deadline').value  = c.deadline  || '';
+  document.getElementById('col-note').value      = c.note      || '';
+  document.getElementById('colmap-overlay').classList.add('show');
+}
+function closeColMapModal() {
+  document.getElementById('colmap-overlay').classList.remove('show');
+}
+function saveColMap() {
+  syncConfig = {
+    sheetId: document.getElementById('cfg-sheet-id').value.trim() || DEFAULT_CONFIG.sheetId,
+    gid:     document.getElementById('cfg-gid').value.trim() || '0',
+    cols: {
+      name:      document.getElementById('col-name').value.trim(),
+      designer:  document.getElementById('col-designer').value.trim(),
+      type:      document.getElementById('col-type').value.trim(),
+      qty:       document.getElementById('col-qty').value.trim(),
+      unitprice: document.getElementById('col-unitprice').value.trim(),
+      priority:  document.getElementById('col-priority').value.trim(),
+      status:    document.getElementById('col-status').value.trim(),
+      deadline:  document.getElementById('col-deadline').value.trim(),
+      note:      document.getElementById('col-note').value.trim(),
+    }
+  };
+  localStorage.setItem('jtl_sync_config', JSON.stringify(syncConfig));
+  closeColMapModal();
+  toast('✓ 欄位設定已儲存');
+}
+
+// ─── DESIGNERS ───────────────────────────────────────────────────────────────
+const DESIGNERS = [
+  { id: 'AMB', name: 'Amber',  role: '視覺設計', color: '#e8ff4a',
+    rates: { '上架包': 2000, '上架包×5': 1800, '官網Banner': 1200 } },
+  { id: 'EMM', name: 'Emma',   role: '電商設計', color: '#4affb4',
+    rates: { '上架包': 2000 } },
+  { id: 'DAP', name: '大P',    role: '視覺設計', color: '#ff6b4a',
+    rates: { '上架包': 2000, '官網Banner': 2000 } },
+  { id: 'YAC', name: '楊雅淳', role: '視覺設計', color: '#b47aff',
+    rates: { '官網Banner': 2000 } },
+  { id: 'VIV', name: 'Vivian', role: '品牌設計', color: '#ff7ab4',
+    rates: { '官網Banner': 2000 } },
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let tasks = JSON.parse(localStorage.getItem('jtl_dispatch_tasks') || '[]');
+let currentFilter   = 'all';
+let currentDesigner = 'all';
+let editingId = null;
+
+// Seed from Google Sheet data if empty
+if (tasks.length === 0) {
+  const d = (offset) => {
+    const dt = new Date(); dt.setDate(dt.getDate() + offset);
+    return dt.toISOString().split('T')[0];
+  };
+  tasks = [
+    { id: uid(), designer:'AMB', name:'Spigen Apple Watch Ultra Band WBF0 (黑) AMP10141', type:'上架包', qty:1, unitprice:2000, priority:'high', status:'inprogress', revisions:0, progress:50, deadline:d(5), note:'上架包×1', createdAt: '2026-05-14' },
+    { id: uid(), designer:'AMB', name:'Spigen Apple Watch Band 上架包 ×5', type:'上架包', qty:5, unitprice:1800, priority:'mid', status:'pending', revisions:0, progress:0, deadline:d(10), note:'上架包×5 優惠價', createdAt: '2026-05-14' },
+    { id: uid(), designer:'EMM', name:'Spigen Galaxy Buds4/4 Pro Rugged Armor (黑) ACS11200', type:'上架包', qty:1, unitprice:2000, priority:'high', status:'inprogress', revisions:0, progress:40, deadline:d(4), note:'', createdAt: '2026-05-14' },
+    { id: uid(), designer:'DAP', name:'Spigen Galaxy Buds4/4 Pro Lock Fit (黑) ACS11202', type:'上架包', qty:1, unitprice:2000, priority:'high', status:'inprogress', revisions:0, progress:30, deadline:d(4), note:'', createdAt: '2026-05-14' },
+    { id: uid(), designer:'DAP', name:'Spigen 6月活動 官網Banner', type:'官網Banner', qty:1, unitprice:2000, priority:'high', status:'pending', revisions:0, progress:0, deadline:d(14), note:'1視覺×4尺寸', createdAt: '2026-05-15' },
+    { id: uid(), designer:'VIV', name:'JTLEGEND 6月活動 官網Banner', type:'官網Banner', qty:6, unitprice:2000, priority:'high', status:'inprogress', revisions:0, progress:20, deadline:d(12), note:'', createdAt: '2026-05-15' },
+    { id: uid(), designer:'YAC', name:'New Coast 6月活動 官網Banner', type:'官網Banner', qty:4, unitprice:2000, priority:'mid', status:'pending', revisions:0, progress:0, deadline:d(12), note:'', createdAt: '2026-05-15' },
+  ];
+  save();
+}
+
+// ─── UTILS ───────────────────────────────────────────────────────────────────
+function uid() { return 't_' + Date.now() + '_' + Math.random().toString(36).slice(2,7); }
+function save() { localStorage.setItem('jtl_dispatch_tasks', JSON.stringify(tasks)); }
+function today() { return new Date().toISOString().split('T')[0]; }
+function daysLeft(deadline) {
+  const t = new Date(today()); t.setHours(0,0,0,0);
+  const d = new Date(deadline); d.setHours(0,0,0,0);
+  return Math.round((d - t) / 86400000);
+}
+function isOverdue(task) { return task.status !== 'done' && task.deadline && daysLeft(task.deadline) < 0; }
+function isThisWeek(deadline) { const n = daysLeft(deadline); return n >= 0 && n <= 7; }
+function getDesigner(id) { return DESIGNERS.find(d => d.id === id) || {}; }
+function fmtMoney(n) { return '$' + Number(n).toLocaleString(); }
+
+function statusLabel(s) {
+  return { pending:'待開始', inprogress:'進行中', review:'待審核', revision:'修改中', done:'已完成' }[s] || s;
+}
+function statusClass(s, task) {
+  if (isOverdue(task)) return 'badge-overdue';
+  return { pending:'badge-pending', inprogress:'badge-inprogress', review:'badge-review', revision:'badge-revision', done:'badge-done' }[s] || '';
+}
+function statusText(task) { return isOverdue(task) ? '逾期' : statusLabel(task.status); }
+
+function priorityHtml(p) {
+  const map = { high:['HIGH','var(--danger)'], mid:['MID','var(--warning)'], low:['LOW','var(--muted)'] };
+  const [label, color] = map[p] || map.mid;
+  return `<span class="priority" style="color:${color}">${label}</span>`;
+}
+function deadlineHtml(deadline) {
+  if (!deadline) return '<span class="deadline ok">—</span>';
+  const n = daysLeft(deadline);
+  let cls = 'ok', txt = deadline;
+  if (n < 0)      { cls = 'overdue';  txt = deadline + ` (逾期${Math.abs(n)}天)`; }
+  else if (n <= 3){ cls = 'due-soon'; txt = deadline + ` (剩${n}天)`; }
+  return `<span class="deadline ${cls}">${txt}</span>`;
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ─── TAB ─────────────────────────────────────────────────────────────────────
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  btn.classList.add('active');
+  if (tab === 'cost') renderCost();
+}
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+function getFiltered() {
+  const q = (document.getElementById('search-input')?.value || '').toLowerCase();
+  return tasks.filter(t => {
+    if (currentDesigner !== 'all' && t.designer !== currentDesigner) return false;
+    if (currentFilter === 'overdue') { if (!isOverdue(t)) return false; }
+    else if (currentFilter !== 'all' && t.status !== currentFilter) return false;
+    if (q && !t.name.toLowerCase().includes(q) && !t.type.toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+
+function renderAll() {
+  renderSidebar();
+  renderSummary();
+  renderTable();
+  renderUpcoming();
+  updateHeaderStats();
+}
+
+function renderSidebar() {
+  const list = document.getElementById('designer-list');
+  list.innerHTML = `
+    <div class="designer-item ${currentDesigner==='all'?'active':''}" onclick="setDesigner('all')">
+      <div class="designer-avatar" style="background:#222;color:#888">ALL</div>
+      <div class="designer-info">
+        <div class="designer-name">全部設計師</div>
+        <div class="designer-sub">所有任務</div>
+      </div>
+      <span class="designer-count">${tasks.length}</span>
+    </div>
+  ` + DESIGNERS.map(d => {
+    const cnt = tasks.filter(t => t.designer === d.id).length;
+    return `
+      <div class="designer-item ${currentDesigner===d.id?'active':''}" onclick="setDesigner('${d.id}')">
+        <div class="designer-avatar" style="background:${d.color}22;color:${d.color}">${d.name[0]}</div>
+        <div class="designer-info">
+          <div class="designer-name">${d.name}</div>
+          <div class="designer-sub">${d.role}</div>
+        </div>
+        <span class="designer-count">${cnt}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderSummary() {
+  const base = currentDesigner === 'all' ? tasks : tasks.filter(t => t.designer === currentDesigner);
+  const done = base.filter(t => t.status === 'done').length;
+  const qty  = base.reduce((s, t) => s + (Number(t.qty) || 0), 0);
+  const weekDue = base.filter(t => t.deadline && isThisWeek(t.deadline) && t.status !== 'done').length;
+  const rate = base.length ? Math.round(done / base.length * 100) : 0;
+
+  document.getElementById('s-total').textContent = base.length;
+  document.getElementById('s-qty').textContent   = qty;
+  document.getElementById('s-week').textContent  = weekDue;
+  document.getElementById('s-rate').textContent  = rate + '%';
+
+  const all = tasks.filter(t => currentDesigner === 'all' || t.designer === currentDesigner);
+  document.getElementById('fc-all').textContent      = all.length;
+  document.getElementById('fc-pending').textContent  = all.filter(t=>t.status==='pending').length;
+  document.getElementById('fc-inprogress').textContent = all.filter(t=>t.status==='inprogress').length;
+  document.getElementById('fc-review').textContent   = all.filter(t=>t.status==='review').length;
+  document.getElementById('fc-revision').textContent = all.filter(t=>t.status==='revision').length;
+  document.getElementById('fc-done').textContent     = all.filter(t=>t.status==='done').length;
+  document.getElementById('fc-overdue').textContent  = all.filter(t=>isOverdue(t)).length;
+}
+
+function renderTable() {
+  const filtered = getFiltered();
+  const tbody = document.getElementById('task-tbody');
+  const empty = document.getElementById('empty-state');
+
+  if (filtered.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  filtered.sort((a, b) => {
+    if (isOverdue(a) && !isOverdue(b)) return -1;
+    if (!isOverdue(a) && isOverdue(b)) return 1;
+    return (a.deadline||'9999') < (b.deadline||'9999') ? -1 : 1;
+  });
+
+  tbody.innerHTML = filtered.map(t => {
+    const d = getDesigner(t.designer);
+    const rev = t.revisions || 0;
+    const revColor = rev === 0 ? 'var(--muted)' : rev <= 2 ? '#ffaa4a' : 'var(--danger)';
+    const statuses = ['pending','inprogress','review','revision','done'];
+    const statusOptions = statuses.map(s =>
+      `<option value="${s}" ${t.status===s?'selected':''}>${statusLabel(s)}</option>`
+    ).join('');
+    return `
+      <tr>
+        <td style="font-weight:500;max-width:200px">
+          <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.name}</div>
+          ${t.note ? `<div style="font-size:10px;color:var(--muted);margin-top:2px">${t.note}</div>` : ''}
+        </td>
+        <td>
+          <div class="designer-chip">
+            <span class="chip-dot" style="background:${d.color}"></span>
+            <span>${d.name || '—'}</span>
+          </div>
+        </td>
+        <td style="color:var(--muted);font-size:12px">${t.type}</td>
+        <td style="font-family:'Space Mono',monospace;font-weight:700">${t.qty}</td>
+        <td>${priorityHtml(t.priority)}</td>
+        <td>
+          <select class="inline-status-select ${isOverdue(t)?'badge-overdue':''}" onchange="changeStatus('${t.id}',this.value)">
+            ${statusOptions}
+          </select>
+        </td>
+        <td>
+          <div style="display:flex;align-items:center;gap:4px">
+            <button class="btn-rev btn-rev-minus" onclick="addRevision('${t.id}',-1)" title="修改次數-1">−</button>
+            <span style="font-family:'Space Mono',monospace;font-size:12px;color:${revColor};min-width:24px;text-align:center">${rev}</span>
+            <button class="btn-rev" onclick="addRevision('${t.id}',1)" title="修改次數+1">＋</button>
+          </div>
+        </td>
+        <td>${deadlineHtml(t.deadline)}</td>
+        <td>
+          <div style="display:flex;gap:5px">
+            <button class="btn btn-secondary btn-sm" onclick="openEdit('${t.id}')">編輯</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteTask('${t.id}')">刪除</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function renderUpcoming() {
+  const upcoming = tasks
+    .filter(t => t.deadline && t.status !== 'done' && daysLeft(t.deadline) >= 0 && daysLeft(t.deadline) <= 7)
+    .sort((a, b) => a.deadline < b.deadline ? -1 : 1)
+    .slice(0, 5);
+
+  const el = document.getElementById('upcoming-list');
+  if (!upcoming.length) { el.innerHTML = '<span>近7天無交期</span>'; return; }
+  el.innerHTML = upcoming.map(t => {
+    const d = getDesigner(t.designer);
+    const n = daysLeft(t.deadline);
+    const color = n <= 1 ? 'var(--danger)' : n <= 3 ? 'var(--warning)' : 'var(--muted)';
+    return `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)">
+      <span style="color:${d.color}">●</span>
+      <span style="flex:1;margin:0 6px;color:var(--text)">${t.name.slice(0,14)}${t.name.length>14?'…':''}</span>
+      <span style="color:${color};font-family:'Space Mono',monospace">+${n}d</span>
+    </div>`;
+  }).join('');
+}
+
+function updateHeaderStats() {
+  const total = tasks.reduce((s,t) => s + (t.unitprice||0) * (t.qty||1), 0);
+  document.getElementById('hdr-total').textContent      = tasks.length;
+  document.getElementById('hdr-inprogress').textContent = tasks.filter(t=>t.status==='inprogress').length;
+  document.getElementById('hdr-overdue').textContent    = tasks.filter(t=>isOverdue(t)).length;
+  document.getElementById('hdr-cost').textContent       = fmtMoney(total);
+}
+
+// ─── COST TAB ────────────────────────────────────────────────────────────────
+function renderCost() {
+  const now = new Date();
+  document.getElementById('cost-month').textContent = `${now.getFullYear()}年${now.getMonth()+1}月`;
+
+  let grandTotal = 0;
+  let doneCount  = 0;
+
+  const cards = DESIGNERS.map(d => {
+    const dt = tasks.filter(t => t.designer === d.id);
+    const doneTasks = dt.filter(t => t.status === 'done');
+    const totalCost = dt.reduce((s, t) => s + (t.unitprice||0) * (t.qty||1), 0);
+    const doneCost  = doneTasks.reduce((s, t) => s + (t.unitprice||0) * (t.qty||1), 0);
+    const totalRevs = dt.reduce((s, t) => s + (t.revisions||0), 0);
+    grandTotal += totalCost;
+    doneCount  += doneTasks.length;
+
+    const initials = d.name[0];
+    return `
+      <div class="cost-card">
+        <div class="cost-card-header">
+          <div class="cost-avatar" style="background:${d.color}22;color:${d.color}">${initials}</div>
+          <div>
+            <div class="cost-name">${d.name}</div>
+            <div class="cost-role">${d.role}</div>
+          </div>
+        </div>
+        <div class="cost-row"><span class="cost-row-label">任務總數</span><span class="cost-row-value">${dt.length} 件</span></div>
+        <div class="cost-row"><span class="cost-row-label">進行中</span><span class="cost-row-value">${dt.filter(t=>t.status==='inprogress').length} 件</span></div>
+        <div class="cost-row"><span class="cost-row-label">已完成</span><span class="cost-row-value" style="color:var(--success)">${doneTasks.length} 件</span></div>
+        <div class="cost-row"><span class="cost-row-label">修改次數合計</span><span class="cost-row-value" style="color:${totalRevs>5?'var(--danger)':'var(--muted)'}">${totalRevs} 次</span></div>
+        <div class="cost-row"><span class="cost-row-label">已完成費用</span><span class="cost-row-value">${fmtMoney(doneCost)}</span></div>
+        <div class="cost-total">
+          <span class="cost-total-label">全部任務費用</span>
+          <span class="cost-total-value">${fmtMoney(totalCost)}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('cost-cards').innerHTML = cards;
+  document.getElementById('cost-grand-total').textContent = fmtMoney(grandTotal);
+  document.getElementById('cost-done-count').textContent  = doneCount + ' 件';
+}
+
+// ─── FILTER ──────────────────────────────────────────────────────────────────
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+function setDesigner(id) { currentDesigner = id; renderAll(); }
+
+// ─── REVISION ────────────────────────────────────────────────────────────────
+function addRevision(id, delta) {
+  tasks = tasks.map(t => {
+    if (t.id !== id) return t;
+    const newRev = Math.max(0, (t.revisions||0) + delta);
+    const newStatus = delta > 0 && t.status === 'review' ? 'revision' : t.status;
+    return { ...t, revisions: newRev, status: newStatus };
+  });
+  save(); renderAll();
+  toast(delta > 0 ? '✓ 修改次數 +1' : '✓ 修改次數 -1');
+}
+
+// ─── INLINE STATUS CHANGE ────────────────────────────────────────────────────
+function changeStatus(id, newStatus) {
+  tasks = tasks.map(t => t.id === id ? { ...t, status: newStatus } : t);
+  save(); renderSidebar(); renderSummary(); renderUpcoming(); updateHeaderStats();
+  toast(`✓ 狀態更新為「${statusLabel(newStatus)}」`);
+}
+
+// ─── MODAL ───────────────────────────────────────────────────────────────────
+function populateDesignerSelect() {
+  const sel = document.getElementById('f-designer');
+  sel.innerHTML = '<option value="">選擇設計師</option>' +
+    DESIGNERS.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+}
+
+// Auto-fill unit price when designer+type changes
+function autoFillPrice() {
+  const did  = document.getElementById('f-designer').value;
+  const type = document.getElementById('f-type').value;
+  const d    = DESIGNERS.find(x => x.id === did);
+  if (!d) return;
+  const price = d.rates[type] || d.rates['上架包'] || 2000;
+  document.getElementById('f-unitprice').value = price;
+}
+
+function openModal() {
+  editingId = null;
+  document.getElementById('modal-title').textContent = '新增發包任務';
+  document.getElementById('f-name').value     = '';
+  document.getElementById('f-designer').value = currentDesigner !== 'all' ? currentDesigner : '';
+  document.getElementById('f-type').value     = '上架包';
+  document.getElementById('f-qty').value      = 1;
+  document.getElementById('f-unitprice').value= 2000;
+  document.getElementById('f-priority').value = 'mid';
+  document.getElementById('f-status').value   = 'pending';
+  document.getElementById('f-progress').value = 0;
+  document.getElementById('f-deadline').value = '';
+  document.getElementById('f-note').value     = '';
+  document.getElementById('modal-overlay').classList.add('show');
+}
+
+function openEdit(id) {
+  editingId = id;
+  const t = tasks.find(x => x.id === id);
+  if (!t) return;
+  document.getElementById('modal-title').textContent = '編輯任務';
+  document.getElementById('f-name').value     = t.name;
+  document.getElementById('f-designer').value = t.designer;
+  document.getElementById('f-type').value     = t.type;
+  document.getElementById('f-qty').value      = t.qty;
+  document.getElementById('f-unitprice').value= t.unitprice || 2000;
+  document.getElementById('f-priority').value = t.priority;
+  document.getElementById('f-status').value   = t.status;
+  document.getElementById('f-progress').value = t.progress;
+  document.getElementById('f-deadline').value = t.deadline || '';
+  document.getElementById('f-note').value     = t.note || '';
+  document.getElementById('modal-overlay').classList.add('show');
+}
+
+function closeModal() { document.getElementById('modal-overlay').classList.remove('show'); }
+
+function saveTask() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('請輸入任務名稱'); return; }
+  const task = {
+    id: editingId || uid(),
+    name,
+    designer:  document.getElementById('f-designer').value,
+    type:      document.getElementById('f-type').value,
+    qty:       Number(document.getElementById('f-qty').value) || 1,
+    unitprice: Number(document.getElementById('f-unitprice').value) || 2000,
+    priority:  document.getElementById('f-priority').value,
+    status:    document.getElementById('f-status').value,
+    progress:  Math.min(100, Math.max(0, Number(document.getElementById('f-progress').value) || 0)),
+    deadline:  document.getElementById('f-deadline').value,
+    note:      document.getElementById('f-note').value.trim(),
+    revisions: editingId ? (tasks.find(t=>t.id===editingId)?.revisions || 0) : 0,
+    createdAt: editingId ? (tasks.find(t=>t.id===editingId)?.createdAt || today()) : today(),
+  };
+  if (editingId) {
+    tasks = tasks.map(t => t.id === editingId ? task : t);
+    toast('✓ 任務已更新');
+  } else {
+    tasks.push(task);
+    toast('✓ 任務已新增');
+  }
+  save(); closeModal(); renderAll();
+}
+
+function deleteTask(id) {
+  if (!confirm('確定要刪除此任務？')) return;
+  tasks = tasks.filter(t => t.id !== id);
+  save(); toast('任務已刪除'); renderAll();
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+document.getElementById('colmap-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeColMapModal();
+});
+document.getElementById('f-designer').addEventListener('change', autoFillPrice);
+document.getElementById('f-type').addEventListener('change', autoFillPrice);
+populateDesignerSelect();
+renderAll();
+</script>
+</body>
+</html>
