@@ -870,16 +870,27 @@ function closeSettings(){ document.getElementById('settingsOverlay').classList.r
 function saveSettings(){ toast('✅ 設定已儲存'); closeSettings(); }
 
 // ── Google Sheets sync ──
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw4ZHZCNHRW46uBAgCYXWiGQMiGXSV1pb9Ov8EGza7UyVbL7TBiRpNMXmdLXMOjL9swtw/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkH-fB7VlXO-T09sBxMSnAiOSolxQAvUlvxQiZxS7IP37rlNdIdzm3R0U429J9siX3Gg/exec';
 
-async function syncSheets(){
+function syncSheets(){
   const btn = document.querySelector('[onclick="syncSheets()"]');
   if(btn){ btn.textContent='⏳ 同步中…'; btn.disabled=true; }
   toast('⏳ 正在從 Google Sheets 拉取資料…');
-  try {
-    const res = await fetch(APPS_SCRIPT_URL);
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const raw = await res.json();
+
+  // 用 JSONP 繞過 CORS
+  const cbName = '__jtlCb_' + Date.now();
+  const script = document.createElement('script');
+  const timeout = setTimeout(()=>{
+    delete window[cbName]; script.remove();
+    if(btn){ btn.textContent='⬇ 從 Sheets 匯入'; btn.disabled=false; }
+    toast('❌ 同步逾時，請確認 Apps Script 已部署為「所有人可存取」');
+  }, 10000);
+
+  window[cbName] = function(raw){
+    clearTimeout(timeout);
+    delete window[cbName]; script.remove();
+    if(btn){ btn.textContent='⬇ 從 Sheets 匯入'; btn.disabled=false; }
+    try {
 
     // 支援兩種格式：
     // 1. { data: [...] }  2. 直接是 array [...]
