@@ -869,9 +869,117 @@ function openSettings(){ document.getElementById('settingsOverlay').classList.ad
 function closeSettings(){ document.getElementById('settingsOverlay').classList.remove('open'); document.getElementById('settingsDrawer').classList.remove('open'); }
 function saveSettings(){ toast('✅ 設定已儲存'); closeSettings(); }
 
-// ── Sheets sync (stub) ──
-function syncSheets(){ toast('⏳ 正在從 Sheets 同步…'); setTimeout(()=>toast('✅ 同步完成（請設定 Sheets ID）'),1500); }
-function importCSV(){ toast('📂 請選擇 CSV 檔案'); }
+// ── Google Sheets sync ──
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw4ZHZCNHRW46uBAgCYXWiGQMiGXSV1pb9Ov8EGza7UyVbL7TBiRpNMXmdLXMOjL9swtw/exec';
+
+async function syncSheets(){
+  const btn = document.querySelector('[onclick="syncSheets()"]');
+  if(btn){ btn.textContent='⏳ 同步中…'; btn.disabled=true; }
+  toast('⏳ 正在從 Google Sheets 拉取資料…');
+  try {
+    const res = await fetch(APPS_SCRIPT_URL);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const raw = await res.json();
+
+    // 支援兩種格式：
+    // 1. { data: [...] }  2. 直接是 array [...]
+    // 你的 Apps Script 回傳格式：{ ok: true, rows: [...] }
+    if(!raw.ok){ toast('❌ Sheets 回傳錯誤：' + (raw.error || '未知錯誤')); return; }
+    const rows = raw.rows || [];
+
+    if(!rows.length){ toast('⚠️ Sheets 回傳空資料，請確認工作表有資料'); return; }
+
+    // 欄位對應：designer / date / type / name / unitprice / qty / total
+    const imported = rows.map(row => {
+      const unitprice = Number(String(row.unitprice||'').replace(/[$,]/g,'')) || 0;
+      const qty       = Number(row.qty) || 1;
+      return {
+        name:      String(row.name      || '').trim() || '未命名任務',
+        designer:  String(row.designer  || '').trim(),
+        type:      String(row.type      || '').trim() || '其他',
+        qty,
+        price:     unitprice,
+        // total 欄位備查，不另存（qty × price 自動算）
+        priority:  '中',           // Sheets 無此欄，預設中
+        status:    '待開始',       // Sheets 無此欄，預設待開始
+        progress:  0,
+        deadline:  normalizeDate(String(row.date || '').trim()),
+        note:      '',
+        revisions: 0,
+      };
+    });
+
+    // 覆蓋或合併（目前選擇覆蓋，可改為 merge）
+    tasks = imported;
+    save();
+    renderTable();
+    updateStats();
+    toast(`✅ 已匯入 ${imported.length} 筆資料`);
+  } catch(err) {
+    console.error(err);
+    toast('❌ 同步失敗：' + err.message);
+  } finally {
+    if(btn){ btn.textContent='⬇ 從 Sheets 匯入'; btn.disabled=false; }
+  }
+}
+
+// 日期格式標準化（處理 YYYY/MM/DD、MM/DD、各種斜線格式）
+function normalizeDate(str){
+  if(!str) return '';
+  // 已經是 YYYY-MM-DD
+  if(/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+  // YYYY/MM/DD
+  if(/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(str)){
+    const [y,m,d] = str.split('/');
+    return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+  }
+  // MM/DD（補年份）
+  if(/^\d{1,2}\/\d{1,2}$/.test(str)){
+    const [m,d] = str.split('/');
+    return `${new Date().getFullYear()}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+  }
+  return '';
+}
+
+function importCSV(){
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = '.csv';
+  input.onchange = e => {
+    const file = e.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const lines = ev.target.result.split('\n').filter(l=>l.trim());
+        const headers = lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,''));
+        const rows = lines.slice(1).map(line=>{
+          const vals = line.split(',').map(v=>v.trim().replace(/^"|"$/g,''));
+          const obj = {};
+          headers.forEach((h,i)=>{ obj[h]=vals[i]||''; });
+          return obj;
+        });
+        // 直接走 syncSheets 的解析邏輯，複用 pick
+        const pick=(row,...keys)=>{ for(const k of keys){ const f=Object.keys(row).find(rk=>rk.trim().toLowerCase()===k.toLowerCase()); if(f!==undefined&&row[f]!=='') return String(row[f]).trim(); } return ''; };
+        tasks = rows.map(row=>({
+          name:pick(row,'任務名稱','task','name','title')||'未命名',
+          designer:pick(row,'設計師','designer'),
+          type:pick(row,'類型','type','品項類型')||'其他',
+          qty:Number(pick(row,'數量','qty','quantity'))||1,
+          price:Number(pick(row,'單價','price'))||0,
+          priority:pick(row,'優先度','priority')||'中',
+          status:pick(row,'狀態','status')||'待開始',
+          progress:Number(pick(row,'進度%','progress'))||0,
+          deadline:normalizeDate(pick(row,'交期','deadline','due')),
+          note:pick(row,'備註','note'),
+          revisions:Number(pick(row,'修改次數','revisions'))||0,
+        }));
+        save(); renderTable(); updateStats();
+        toast(`✅ CSV 已匯入 ${tasks.length} 筆`);
+      } catch(err){ toast('❌ CSV 解析失敗：'+err.message); }
+    };
+    reader.readAsText(file,'UTF-8');
+  };
+  input.click();
+}
 
 // ── Init ──
 updateStats();
