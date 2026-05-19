@@ -6,325 +6,162 @@
 <title>DISPATCH // 杰拓設計發包管理</title>
 <style>
 :root {
-  --bg: #0f1117;
-  --bg2: #1a1d27;
-  --bg3: #222536;
-  --bg4: #2a2e42;
-  --border: #2e3350;
-  --accent: #4f7cff;
-  --accent2: #ff6b35;
-  --green: #22c55e;
-  --yellow: #f59e0b;
-  --red: #ef4444;
-  --purple: #a855f7;
-  --text: #e8eaf0;
-  --text2: #8b90a8;
-  --text3: #5a5f7a;
-  --card-radius: 12px;
-  --font: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --bg:#0f1117;--bg2:#1a1d27;--bg3:#222536;--bg4:#2a2e42;
+  --border:#2e3350;--accent:#4f7cff;--accent2:#ff6b35;
+  --green:#22c55e;--yellow:#f59e0b;--red:#ef4444;--purple:#a855f7;
+  --text:#e8eaf0;--text2:#8b90a8;--text3:#5a5f7a;
+  --radius:12px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans TC',sans-serif;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-body { background:var(--bg); color:var(--text); font-family:var(--font); min-height:100vh; }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;}
 
-/* ── Header ── */
-header {
-  background:var(--bg2);
-  border-bottom:1px solid var(--border);
-  padding:0 24px;
-  display:flex; align-items:center; justify-content:space-between;
-  height:60px; position:sticky; top:0; z-index:100;
-}
-.logo { display:flex; align-items:center; gap:10px; }
-.logo-badge {
-  background:linear-gradient(135deg,var(--accent),#7c3aed);
-  color:#fff; font-size:11px; font-weight:700; letter-spacing:2px;
-  padding:4px 10px; border-radius:6px;
-}
-.logo-text { font-size:13px; color:var(--text2); letter-spacing:1px; }
-.header-actions { display:flex; gap:8px; align-items:center; }
-.btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; border:none; transition:all .2s; }
-.btn-primary { background:var(--accent); color:#fff; }
-.btn-primary:hover { background:#3d6ae8; }
-.btn-ghost { background:transparent; color:var(--text2); border:1px solid var(--border); }
-.btn-ghost:hover { background:var(--bg3); color:var(--text); }
-.btn-sm { padding:5px 10px; font-size:12px; }
-.btn-danger { background:#ef444420; color:var(--red); border:1px solid #ef444440; }
-.btn-danger:hover { background:#ef444435; }
-.btn-success { background:#22c55e20; color:var(--green); border:1px solid #22c55e40; }
-.btn-success:hover { background:#22c55e35; }
+header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-badge{background:linear-gradient(135deg,var(--accent),#7c3aed);color:#fff;font-size:11px;font-weight:700;letter-spacing:2px;padding:4px 10px;border-radius:6px;}
+.logo-text{font-size:13px;color:var(--text2);letter-spacing:1px;}
+.header-actions{display:flex;gap:8px;align-items:center;}
 
-/* ── Stats ── */
-.stats-bar {
-  display:grid; grid-template-columns:repeat(4,1fr); gap:12px;
-  padding:20px 24px 0;
-}
-.stat-card {
-  background:var(--bg2); border:1px solid var(--border);
-  border-radius:var(--card-radius); padding:18px 20px;
-  display:flex; align-items:center; gap:14px;
-}
-.stat-icon {
-  width:42px; height:42px; border-radius:10px;
-  display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;
-}
-.stat-label { font-size:11px; color:var(--text2); margin-bottom:4px; letter-spacing:.5px; text-transform:uppercase; }
-.stat-value { font-size:26px; font-weight:700; letter-spacing:-1px; }
-.stat-sub { font-size:11px; color:var(--text3); margin-top:2px; }
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .2s;font-family:var(--font);}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:#3d6ae8;}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border);}
+.btn-ghost:hover{background:var(--bg3);color:var(--text);}
+.btn-danger{background:#ef444420;color:var(--red);border:1px solid #ef444440;}
+.btn-danger:hover{background:#ef444435;}
+.btn-success{background:#22c55e20;color:var(--green);border:1px solid #22c55e40;}
+.btn-sm{padding:5px 10px;font-size:12px;}
 
-/* ── Tabs ── */
-.tabs-wrap { padding:20px 24px 0; }
-.tabs {
-  display:flex; gap:2px; background:var(--bg2);
-  border:1px solid var(--border); border-radius:10px; padding:4px; width:fit-content;
-}
-.tab {
-  padding:8px 20px; border-radius:7px; font-size:13px; font-weight:500;
-  cursor:pointer; color:var(--text2); transition:all .2s; border:none; background:transparent;
-}
-.tab.active { background:var(--bg4); color:var(--text); }
-.tab:hover:not(.active) { color:var(--text); }
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:20px 24px 0;}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;gap:14px;}
+.stat-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.stat-label{font-size:11px;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;}
+.stat-value{font-size:26px;font-weight:700;letter-spacing:-1px;}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:2px;}
 
-/* ── Main content ── */
-.content { padding:16px 24px 80px; }
-.panel { display:none; }
-.panel.active { display:block; }
+.tabs-wrap{padding:20px 24px 0;}
+.tabs{display:flex;gap:2px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:4px;width:fit-content;}
+.tab{padding:8px 20px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;color:var(--text2);transition:all .2s;border:none;background:transparent;font-family:var(--font);}
+.tab.active{background:var(--bg4);color:var(--text);}
+.tab:hover:not(.active){color:var(--text);}
 
-/* ── Kanban toolbar ── */
-.toolbar {
-  display:flex; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap;
-}
-.filter-group { display:flex; gap:6px; flex-wrap:wrap; }
-.filter-chip {
-  padding:5px 12px; border-radius:20px; font-size:12px; font-weight:500;
-  cursor:pointer; border:1px solid var(--border); background:var(--bg2); color:var(--text2);
-  transition:all .2s;
-}
-.filter-chip.active { border-color:var(--accent); color:var(--accent); background:#4f7cff15; }
-.filter-chip:hover:not(.active) { border-color:var(--text3); color:var(--text); }
-select.filter-select {
-  padding:6px 12px; border-radius:8px; background:var(--bg2); color:var(--text2);
-  border:1px solid var(--border); font-size:13px; cursor:pointer; outline:none;
-}
-select.filter-select:focus { border-color:var(--accent); color:var(--text); }
-.toolbar-right { margin-left:auto; }
+.content{padding:16px 24px 80px;}
+.panel{display:none;}
+.panel.active{display:block;}
 
-/* ── Table ── */
-.table-wrap {
-  background:var(--bg2); border:1px solid var(--border);
-  border-radius:var(--card-radius); overflow:hidden;
-}
-table { width:100%; border-collapse:collapse; }
-thead tr { background:var(--bg3); }
-th {
-  padding:12px 14px; text-align:left; font-size:11px; font-weight:600;
-  color:var(--text2); letter-spacing:.8px; text-transform:uppercase;
-  border-bottom:1px solid var(--border); white-space:nowrap;
-}
-td {
-  padding:12px 14px; font-size:13px; border-bottom:1px solid var(--border);
-  vertical-align:middle;
-}
-tbody tr:last-child td { border-bottom:none; }
-tbody tr:hover { background:#ffffff05; }
-.task-name { font-weight:500; color:var(--text); }
-.task-note { font-size:11px; color:var(--text3); margin-top:2px; }
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.filter-group{display:flex;gap:6px;flex-wrap:wrap;}
+.filter-chip{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--bg2);color:var(--text2);transition:all .2s;font-family:var(--font);}
+.filter-chip.active{border-color:var(--accent);color:var(--accent);background:#4f7cff15;}
+.filter-chip:hover:not(.active){border-color:var(--text3);color:var(--text);}
+.filter-select{padding:6px 12px;border-radius:8px;background:var(--bg2);color:var(--text2);border:1px solid var(--border);font-size:13px;cursor:pointer;outline:none;font-family:var(--font);}
+.filter-select:focus{border-color:var(--accent);}
+.toolbar-right{margin-left:auto;}
 
-/* ── Badges ── */
-.badge {
-  display:inline-flex; align-items:center; gap:4px;
-  padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap;
-}
-.badge::before { content:''; width:5px; height:5px; border-radius:50%; background:currentColor; opacity:.8; }
-.badge-pending   { background:#f59e0b15; color:#f59e0b; }
-.badge-progress  { background:#4f7cff15; color:#4f7cff; }
-.badge-review    { background:#a855f715; color:#a855f7; }
-.badge-revision  { background:#ff6b3515; color:#ff6b35; }
-.badge-done      { background:#22c55e15; color:#22c55e; }
-.badge-overdue   { background:#ef444415; color:#ef4444; }
+.table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:var(--bg3);}
+th{padding:12px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--text2);letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:12px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:#ffffff05;}
+tbody tr.overdue td{background:#ef444408;}
+.task-name{font-weight:500;}
+.task-note{font-size:11px;color:var(--text3);margin-top:2px;}
 
-.priority-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
-.pri-high { background:var(--red); box-shadow:0 0 6px var(--red); }
-.pri-mid  { background:var(--yellow); }
-.pri-low  { background:var(--text3); }
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.8;}
+.badge-pending{background:#f59e0b15;color:#f59e0b;}
+.badge-progress{background:#4f7cff15;color:#4f7cff;}
+.badge-review{background:#a855f715;color:#a855f7;}
+.badge-revision{background:#ff6b3515;color:#ff6b35;}
+.badge-done{background:#22c55e15;color:#22c55e;}
+.badge-overdue{background:#ef444415;color:#ef4444;}
 
-/* ── Empty state ── */
-.empty-state {
-  text-align:center; padding:60px 20px; color:var(--text3);
-}
-.empty-state .icon { font-size:40px; margin-bottom:12px; opacity:.4; }
-.empty-state p { font-size:14px; }
+.priority-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px;}
+.pri-high{background:var(--red);}
+.pri-mid{background:var(--yellow);}
+.pri-low{background:var(--text3);}
 
-/* ── Side Drawer ── */
-.drawer-overlay {
-  position:fixed; inset:0; background:#00000070; z-index:200;
-  opacity:0; pointer-events:none; transition:opacity .25s;
-}
-.drawer-overlay.open { opacity:1; pointer-events:all; }
-.drawer {
-  position:fixed; right:0; top:0; bottom:0; width:420px;
-  background:var(--bg2); border-left:1px solid var(--border);
-  z-index:201; transform:translateX(100%); transition:transform .3s cubic-bezier(.4,0,.2,1);
-  display:flex; flex-direction:column; overflow:hidden;
-}
-.drawer.open { transform:translateX(0); }
-.drawer-header {
-  padding:20px 24px; border-bottom:1px solid var(--border);
-  display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
-}
-.drawer-title { font-size:16px; font-weight:600; }
-.drawer-close { background:none; border:none; color:var(--text2); font-size:20px; cursor:pointer; line-height:1; padding:4px; }
-.drawer-close:hover { color:var(--text); }
-.drawer-body { flex:1; overflow-y:auto; padding:24px; }
-.drawer-footer {
-  padding:16px 24px; border-top:1px solid var(--border);
-  display:flex; gap:8px; flex-shrink:0;
-}
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3);}
+.empty-icon{font-size:40px;margin-bottom:12px;opacity:.4;}
 
-/* ── Form ── */
-.form-group { margin-bottom:18px; }
-label.form-label { display:block; font-size:12px; font-weight:500; color:var(--text2); margin-bottom:6px; letter-spacing:.4px; }
-input[type=text], input[type=number], input[type=date], select, textarea {
-  width:100%; padding:9px 12px; background:var(--bg3); border:1px solid var(--border);
-  border-radius:8px; color:var(--text); font-size:13px; outline:none; font-family:var(--font);
-  transition:border .2s;
-}
-input:focus, select:focus, textarea:focus { border-color:var(--accent); }
-textarea { resize:vertical; min-height:72px; }
-.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.range-wrap { display:flex; align-items:center; gap:8px; }
-input[type=range] { flex:1; accent-color:var(--accent); }
-.range-val { font-size:13px; color:var(--accent); font-weight:600; min-width:30px; text-align:right; }
+/* Drawer */
+.drawer-overlay{position:fixed;inset:0;background:#00000070;z-index:200;opacity:0;pointer-events:none;transition:opacity .25s;}
+.drawer-overlay.open{opacity:1;pointer-events:all;}
+.drawer{position:fixed;right:0;top:0;bottom:0;width:420px;background:var(--bg2);border-left:1px solid var(--border);z-index:201;transform:translateX(100%);transition:transform .3s ease;display:flex;flex-direction:column;overflow:hidden;}
+.drawer.open{transform:translateX(0);}
+.drawer-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.drawer-title{font-size:16px;font-weight:600;}
+.drawer-close{background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;line-height:1;padding:4px;}
+.drawer-close:hover{color:var(--text);}
+.drawer-body{flex:1;overflow-y:auto;padding:24px;}
+.drawer-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;}
 
-/* ── Cost panel ── */
-.cost-summary {
-  display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px;
-}
-.cost-card {
-  background:var(--bg2); border:1px solid var(--border); border-radius:var(--card-radius);
-  padding:20px; text-align:center;
-}
-.cost-card .amount { font-size:28px; font-weight:700; color:var(--accent); letter-spacing:-1px; }
-.cost-card .label { font-size:12px; color:var(--text2); margin-top:4px; }
+.form-group{margin-bottom:18px;}
+.form-label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px;letter-spacing:.4px;}
+input[type=text],input[type=number],input[type=date],select,textarea{width:100%;padding:9px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none;font-family:var(--font);transition:border .2s;}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);}
+textarea{resize:vertical;min-height:72px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.range-wrap{display:flex;align-items:center;gap:8px;}
+input[type=range]{flex:1;accent-color:var(--accent);}
+.range-val{font-size:13px;color:var(--accent);font-weight:600;min-width:36px;text-align:right;}
 
-.designer-costs {
-  background:var(--bg2); border:1px solid var(--border); border-radius:var(--card-radius); overflow:hidden;
-}
-.designer-row {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:14px 20px; border-bottom:1px solid var(--border);
-}
-.designer-row:last-child { border-bottom:none; }
-.designer-name { font-weight:500; font-size:14px; }
-.designer-stats { font-size:12px; color:var(--text2); margin-top:2px; }
-.designer-amount { font-size:18px; font-weight:700; color:var(--accent); }
+/* Cost */
+.cost-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.cost-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;}
+.cost-card .amount{font-size:28px;font-weight:700;color:var(--accent);letter-spacing:-1px;}
+.cost-card .clabel{font-size:12px;color:var(--text2);margin-top:4px;}
+.designer-costs{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.designer-row{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);}
+.designer-row:last-child{border-bottom:none;}
+.dname{font-weight:500;font-size:14px;}
+.dstats{font-size:12px;color:var(--text2);margin-top:2px;}
+.damount{font-size:18px;font-weight:700;color:var(--accent);}
 
-/* ── Quote panel ── */
-.quote-section { margin-bottom:24px; }
-.section-header {
-  display:flex; align-items:center; justify-content:space-between;
-  margin-bottom:12px;
-}
-.section-title { font-size:15px; font-weight:600; }
-.section-sub { font-size:12px; color:var(--text2); margin-top:2px; }
-.quote-table-wrap {
-  background:var(--bg2); border:1px solid var(--border);
-  border-radius:var(--card-radius); overflow:hidden;
-}
-.quote-table-wrap table th { font-size:11px; }
-.editable-cell {
-  background:transparent; border:none; color:var(--text); font-size:13px;
-  width:100%; padding:0; font-family:var(--font); outline:none; text-align:center;
-  cursor:pointer;
-}
-.editable-cell:focus {
-  background:var(--bg4); border-radius:4px; padding:2px 6px;
-  box-shadow:0 0 0 2px var(--accent);
-}
-.editable-cell::placeholder { color:var(--text3); }
-.add-col-btn, .add-row-btn {
-  background:none; border:none; color:var(--text3); cursor:pointer;
-  font-size:18px; padding:4px 8px; transition:color .2s;
-}
-.add-col-btn:hover, .add-row-btn:hover { color:var(--accent); }
-.del-row-btn {
-  background:none; border:none; color:var(--text3); cursor:pointer;
-  font-size:14px; padding:2px 6px; transition:color .2s; opacity:0;
-}
-tbody tr:hover .del-row-btn { opacity:1; }
-.del-row-btn:hover { color:var(--red); }
+/* Quote */
+.quote-section{margin-bottom:24px;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.section-title{font-size:15px;font-weight:600;}
+.section-sub{font-size:12px;color:var(--text2);margin-top:2px;}
+.quote-table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:auto;}
+.editable-cell{background:transparent;border:none;color:var(--text);font-size:13px;width:100%;padding:2px 4px;font-family:var(--font);outline:none;text-align:center;}
+.editable-cell:focus{background:var(--bg4);border-radius:4px;box-shadow:0 0 0 2px var(--accent);}
+.del-row-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:2px 6px;opacity:0;transition:color .2s;}
+tbody tr:hover .del-row-btn{opacity:1;}
+.del-row-btn:hover{color:var(--red);}
 
-.spec-section { margin-bottom:24px; }
-.spec-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; }
-.spec-card {
-  background:var(--bg2); border:1px solid var(--border); border-radius:var(--card-radius);
-  overflow:hidden;
-}
-.spec-card-header {
-  background:var(--bg3); padding:12px 16px;
-  display:flex; align-items:center; justify-content:space-between;
-  border-bottom:1px solid var(--border);
-}
-.spec-card-title { font-size:13px; font-weight:600; }
-.spec-card table { width:100%; }
-.spec-card td { padding:9px 14px; font-size:12px; border-bottom:1px solid var(--border); }
-.spec-card tr:last-child td { border-bottom:none; }
-.spec-card td:first-child { color:var(--text2); width:40px; text-align:center; font-weight:600; }
-.spec-card td:nth-child(2) { color:var(--text3); font-size:11px; }
-.spec-tag {
-  display:inline-block; padding:2px 7px; border-radius:4px; font-size:10px; font-weight:600;
-  background:var(--accent); color:#fff; margin-left:6px; opacity:.7;
-}
+.spec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+.spec-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.spec-card-header{background:var(--bg3);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.spec-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;}
+.spec-del:hover{color:var(--red);}
+.spec-card td{padding:8px 14px;font-size:12px;border-bottom:1px solid var(--border);}
+.spec-card tr:last-child td{border-bottom:none;}
+.spec-card td:first-child{color:var(--text2);width:36px;text-align:center;font-weight:600;}
+.spec-card td:nth-child(3){color:var(--text3);font-size:11px;}
+.add-item-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:4px 8px;width:100%;transition:color .2s;}
+.add-item-btn:hover{color:var(--accent);}
 
-/* ── Settings ── */
-.settings-card {
-  background:var(--bg2); border:1px solid var(--border);
-  border-radius:var(--card-radius); padding:24px; margin-bottom:16px;
-}
-.settings-title { font-size:14px; font-weight:600; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border); }
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg4);border:1px solid var(--border);border-radius:10px;padding:10px 20px;font-size:13px;z-index:500;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* ── Overdue row ── */
-tr.overdue td { background:#ef444408; }
-tr.overdue .task-name { color:#ef4444; }
-
-/* ── Mobile ── */
 @media(max-width:768px){
-  .stats-bar { grid-template-columns:repeat(2,1fr); padding:12px; gap:8px; }
-  .content { padding:12px 12px 100px; }
-  header { padding:0 12px; }
-  .drawer { width:100%; }
-  .tabs-wrap { padding:12px 12px 0; }
-  .cost-summary { grid-template-columns:repeat(2,1fr); }
-  .form-row { grid-template-columns:1fr; }
-  table { font-size:12px; }
-  th, td { padding:8px 10px; }
-  .stat-value { font-size:20px; }
+  .stats-bar{grid-template-columns:repeat(2,1fr);padding:12px;gap:8px;}
+  .content{padding:12px 12px 100px;}
+  header{padding:0 12px;}
+  .drawer{width:100%;}
+  .tabs-wrap{padding:12px 12px 0;}
+  .cost-summary{grid-template-columns:repeat(2,1fr);}
+  .form-row{grid-template-columns:1fr;}
+  th,td{padding:8px 10px;}
+  .stat-value{font-size:20px;}
 }
-
-/* ── Bottom nav (mobile) ── */
-.bottom-nav {
-  display:none; position:fixed; bottom:0; left:0; right:0;
-  background:var(--bg2); border-top:1px solid var(--border);
-  padding:8px 0 env(safe-area-inset-bottom,8px); z-index:100;
-}
-.bottom-nav-inner { display:flex; justify-content:space-around; }
-.nav-item { display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:4px 16px; color:var(--text3); font-size:10px; border:none; background:none; }
-.nav-item.active { color:var(--accent); }
-.nav-item .nav-icon { font-size:20px; }
-@media(max-width:768px){ .bottom-nav { display:block; } .tabs-wrap { display:none; } }
-
-/* ── Notifications ── */
-.toast {
-  position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(20px);
-  background:var(--bg4); border:1px solid var(--border); border-radius:10px;
-  padding:10px 20px; font-size:13px; z-index:500;
-  opacity:0; transition:all .3s; pointer-events:none; white-space:nowrap;
-}
-.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
-<!-- Header -->
 <header>
   <div class="logo">
     <span class="logo-badge">DISPATCH</span>
@@ -332,48 +169,29 @@ tr.overdue .task-name { color:#ef4444; }
   </div>
   <div class="header-actions">
     <button class="btn btn-ghost btn-sm" onclick="importCSV()">📂 匯入 CSV</button>
-    <button class="btn btn-ghost btn-sm" onclick="openSettings()">⚙ Sheets 設定</button>
     <button class="btn btn-primary btn-sm" onclick="openDrawer()">＋ 新增任務</button>
   </div>
 </header>
 
-<!-- Stats -->
 <div class="stats-bar">
   <div class="stat-card">
     <div class="stat-icon" style="background:#4f7cff15;color:var(--accent)">📋</div>
-    <div>
-      <div class="stat-label">任務總數</div>
-      <div class="stat-value" id="statTotal">0</div>
-      <div class="stat-sub">所有發包項目</div>
-    </div>
+    <div><div class="stat-label">任務總數</div><div class="stat-value" id="statTotal">0</div><div class="stat-sub">所有發包項目</div></div>
   </div>
   <div class="stat-card">
     <div class="stat-icon" style="background:#22c55e15;color:var(--green)">⚡</div>
-    <div>
-      <div class="stat-label">進行中</div>
-      <div class="stat-value" id="statProgress">0</div>
-      <div class="stat-sub">執行中任務</div>
-    </div>
+    <div><div class="stat-label">進行中</div><div class="stat-value" id="statProgress">0</div><div class="stat-sub">執行中任務</div></div>
   </div>
   <div class="stat-card">
     <div class="stat-icon" style="background:#ef444415;color:var(--red)">⚠️</div>
-    <div>
-      <div class="stat-label">逾期警示</div>
-      <div class="stat-value" id="statOverdue">0</div>
-      <div class="stat-sub">需要立即處理</div>
-    </div>
+    <div><div class="stat-label">逾期警示</div><div class="stat-value" id="statOverdue">0</div><div class="stat-sub">需要立即處理</div></div>
   </div>
   <div class="stat-card">
     <div class="stat-icon" style="background:#f59e0b15;color:var(--yellow)">💰</div>
-    <div>
-      <div class="stat-label">本月費用</div>
-      <div class="stat-value" id="statCost">$0</div>
-      <div class="stat-sub">設計費合計</div>
-    </div>
+    <div><div class="stat-label">本月費用</div><div class="stat-value" id="statCost">$0</div><div class="stat-sub">設計費合計</div></div>
   </div>
 </div>
 
-<!-- Tabs -->
 <div class="tabs-wrap">
   <div class="tabs">
     <button class="tab active" onclick="switchTab('kanban',this)">📋 任務看板</button>
@@ -382,108 +200,97 @@ tr.overdue .task-name { color:#ef4444; }
   </div>
 </div>
 
-<!-- ══ KANBAN PANEL ══ -->
 <div class="content">
-<div class="panel active" id="panel-kanban">
-  <div class="toolbar">
-    <div class="filter-group" id="statusFilters">
-      <button class="filter-chip active" data-status="all" onclick="filterStatus('all',this)">全部 <span id="fc-all">0</span></button>
-      <button class="filter-chip" data-status="待開始" onclick="filterStatus('待開始',this)">待開始 <span id="fc-待開始">0</span></button>
-      <button class="filter-chip" data-status="進行中" onclick="filterStatus('進行中',this)">進行中 <span id="fc-進行中">0</span></button>
-      <button class="filter-chip" data-status="待審核" onclick="filterStatus('待審核',this)">待審核 <span id="fc-待審核">0</span></button>
-      <button class="filter-chip" data-status="修改中" onclick="filterStatus('修改中',this)">修改中 <span id="fc-修改中">0</span></button>
-      <button class="filter-chip" data-status="已完成" onclick="filterStatus('已完成',this)">已完成 <span id="fc-已完成">0</span></button>
-      <button class="filter-chip" data-status="逾期" onclick="filterStatus('逾期',this)">逾期 <span id="fc-逾期">0</span></button>
-    </div>
-    <select class="filter-select" id="designerFilter" onchange="renderTable()">
-      <option value="">所有設計師</option>
-      <option>Amber</option><option>Emma</option><option>大P</option><option>楊雅淳</option><option>Vivian</option>
-    </select>
-    <div class="toolbar-right">
-      <button class="btn btn-ghost btn-sm" onclick="syncSheets()">⬇ 從 Sheets 匯入</button>
-    </div>
-  </div>
-  <div class="table-wrap">
-    <table id="taskTable">
-      <thead>
-        <tr>
-          <th>任務名稱</th><th>設計師</th><th>品項類型</th>
-          <th>數量</th><th>優先度</th><th>狀態</th>
-          <th>修改次數</th><th>交期</th><th>操作</th>
-        </tr>
-      </thead>
-      <tbody id="taskBody"></tbody>
-    </table>
-  </div>
-</div>
 
-<!-- ══ COST PANEL ══ -->
-<div class="panel" id="panel-cost">
-  <div class="cost-summary">
-    <div class="cost-card">
-      <div class="amount" id="costTotal">$0</div>
-      <div class="label">本月設計費合計</div>
-    </div>
-    <div class="cost-card">
-      <div class="amount" id="costDone" style="color:var(--green)">0 件</div>
-      <div class="label">已完成任務</div>
-    </div>
-    <div class="cost-card">
-      <div class="amount" id="costRate" style="color:var(--yellow)">0%</div>
-      <div class="label">完成率</div>
-    </div>
-  </div>
-  <div class="section-header"><div><div class="section-title">各設計師費用明細</div></div></div>
-  <div class="designer-costs" id="designerCosts"></div>
-</div>
-
-<!-- ══ QUOTE PANEL ══ -->
-<div class="panel" id="panel-quote">
-  <!-- 報價彙整 -->
-  <div class="quote-section">
-    <div class="section-header">
-      <div>
-        <div class="section-title">各設計師報價彙整</div>
-        <div class="section-sub">點擊任意格子即可編輯，新增欄位 / 設計師皆可動態調整</div>
+  <!-- 任務看板 -->
+  <div class="panel active" id="panel-kanban">
+    <div class="toolbar">
+      <div class="filter-group">
+        <button class="filter-chip active" onclick="filterStatus('all',this)">全部 <span id="fc-all">0</span></button>
+        <button class="filter-chip" onclick="filterStatus('待開始',this)">待開始 <span id="fc-0">0</span></button>
+        <button class="filter-chip" onclick="filterStatus('進行中',this)">進行中 <span id="fc-1">0</span></button>
+        <button class="filter-chip" onclick="filterStatus('待審核',this)">待審核 <span id="fc-2">0</span></button>
+        <button class="filter-chip" onclick="filterStatus('修改中',this)">修改中 <span id="fc-3">0</span></button>
+        <button class="filter-chip" onclick="filterStatus('已完成',this)">已完成 <span id="fc-4">0</span></button>
+        <button class="filter-chip" onclick="filterStatus('逾期',this)">逾期 <span id="fc-5">0</span></button>
       </div>
-      <div style="display:flex;gap:8px">
-        <button class="btn btn-ghost btn-sm" onclick="addQuoteRow()">＋ 新增設計師</button>
-        <button class="btn btn-ghost btn-sm" onclick="addQuoteCol()">＋ 新增品項</button>
-        <button class="btn btn-success btn-sm" onclick="saveQuote()">✓ 儲存</button>
+      <select class="filter-select" id="designerFilter" onchange="renderTable()">
+        <option value="">所有設計師</option>
+        <option>Amber</option><option>Emma</option><option>大P</option><option>楊雅淳</option><option>Vivian</option>
+      </select>
+      <div class="toolbar-right">
+        <button class="btn btn-ghost btn-sm" onclick="syncSheets()">⬇ 從 Sheets 匯入</button>
       </div>
     </div>
-    <div class="quote-table-wrap">
-      <table id="quoteTable">
-        <thead id="quoteHead"></thead>
-        <tbody id="quoteBody"></tbody>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>任務名稱</th><th>設計師</th><th>品項類型</th>
+            <th>數量</th><th>優先度</th><th>狀態</th>
+            <th>修改次數</th><th>交期</th><th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="taskBody"></tbody>
       </table>
     </div>
   </div>
 
-  <!-- 官網 Banner 規格 -->
-  <div class="spec-section">
-    <div class="section-header">
-      <div class="section-title">官網 Banner 尺寸規格</div>
-      <button class="btn btn-ghost btn-sm" onclick="addSpecRow('official')">＋ 新增</button>
+  <!-- 費用總覽 -->
+  <div class="panel" id="panel-cost">
+    <div class="cost-summary">
+      <div class="cost-card"><div class="amount" id="costTotal">$0</div><div class="clabel">本月設計費合計</div></div>
+      <div class="cost-card"><div class="amount" id="costDone" style="color:var(--green)">0 件</div><div class="clabel">已完成任務</div></div>
+      <div class="cost-card"><div class="amount" id="costRate" style="color:var(--yellow)">0%</div><div class="clabel">完成率</div></div>
     </div>
-    <div class="spec-grid" id="officialSpecGrid"></div>
+    <div class="section-header"><div class="section-title">各設計師費用明細</div></div>
+    <div class="designer-costs" id="designerCosts"></div>
   </div>
 
-  <!-- 網購 Banner 規格 -->
-  <div class="spec-section">
-    <div class="section-header">
-      <div class="section-title">網購 Banner 尺寸規格（13尺寸）</div>
-      <button class="btn btn-ghost btn-sm" onclick="addSpecRow('shop')">＋ 新增</button>
+  <!-- 報價規格 -->
+  <div class="panel" id="panel-quote">
+    <div class="quote-section">
+      <div class="section-header">
+        <div>
+          <div class="section-title">各設計師報價彙整</div>
+          <div class="section-sub">點擊格子即可編輯，新增／刪除欄列皆可</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost btn-sm" onclick="addQuoteRow()">＋ 設計師</button>
+          <button class="btn btn-ghost btn-sm" onclick="addQuoteCol()">＋ 品項</button>
+          <button class="btn btn-success btn-sm" onclick="saveQuote()">✓ 儲存</button>
+        </div>
+      </div>
+      <div class="quote-table-wrap">
+        <table id="quoteTable">
+          <thead id="quoteHead"></thead>
+          <tbody id="quoteBody"></tbody>
+        </table>
+      </div>
     </div>
-    <div class="spec-grid" id="shopSpecGrid"></div>
+
+    <div class="quote-section">
+      <div class="section-header">
+        <div class="section-title">官網 Banner 尺寸規格</div>
+        <button class="btn btn-ghost btn-sm" onclick="addPlatform('official')">＋ 平台</button>
+      </div>
+      <div class="spec-grid" id="officialGrid"></div>
+    </div>
+
+    <div class="quote-section">
+      <div class="section-header">
+        <div class="section-title">網購 Banner 尺寸規格</div>
+        <button class="btn btn-ghost btn-sm" onclick="addPlatform('shop')">＋ 平台</button>
+      </div>
+      <div class="spec-grid" id="shopGrid"></div>
+    </div>
   </div>
+
 </div>
 
-</div><!-- /content -->
-
-<!-- ══ DRAWER ══ -->
-<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
-<div class="drawer" id="drawer">
+<!-- 任務 Drawer -->
+<div class="drawer-overlay" id="taskOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="taskDrawer">
   <div class="drawer-header">
     <div class="drawer-title" id="drawerTitle">新增發包任務</div>
     <button class="drawer-close" onclick="closeDrawer()">✕</button>
@@ -495,7 +302,7 @@ tr.overdue .task-name { color:#ef4444; }
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">指派設計師 *</label>
+        <label class="form-label">指派設計師</label>
         <select id="f-designer">
           <option value="">選擇設計師</option>
           <option>Amber</option><option>Emma</option><option>大P</option><option>楊雅淳</option><option>Vivian</option>
@@ -540,8 +347,8 @@ tr.overdue .task-name { color:#ef4444; }
     <div class="form-group">
       <label class="form-label">進度（%）</label>
       <div class="range-wrap">
-        <input type="range" id="f-progress" min="0" max="100" value="0" oninput="document.getElementById('f-prog-val').textContent=this.value+'%'">
-        <span class="range-val" id="f-prog-val">0%</span>
+        <input type="range" id="f-progress" min="0" max="100" value="0" oninput="document.getElementById('progVal').textContent=this.value+'%'">
+        <span class="range-val" id="progVal">0%</span>
       </div>
     </div>
     <div class="form-group">
@@ -550,7 +357,7 @@ tr.overdue .task-name { color:#ef4444; }
     </div>
     <div class="form-group">
       <label class="form-label">備註</label>
-      <textarea id="f-note" placeholder="補充說明、參考連結等…"></textarea>
+      <textarea id="f-note" placeholder="補充說明…"></textarea>
     </div>
   </div>
   <div class="drawer-footer">
@@ -559,440 +366,443 @@ tr.overdue .task-name { color:#ef4444; }
   </div>
 </div>
 
-<!-- Settings drawer -->
-<div class="drawer-overlay" id="settingsOverlay" onclick="closeSettings()"></div>
-<div class="drawer" id="settingsDrawer">
-  <div class="drawer-header">
-    <div class="drawer-title">⚙ Google Sheets 欄位設定</div>
-    <button class="drawer-close" onclick="closeSettings()">✕</button>
-  </div>
-  <div class="drawer-body">
-    <div class="settings-card">
-      <div class="settings-title">試算表連結</div>
-      <div class="form-group"><label class="form-label">試算表 ID</label><input type="text" id="s-sheetId" placeholder="1BxiMVs0XRA..."></div>
-      <div class="form-group"><label class="form-label">工作表 GID</label><input type="text" id="s-gid" placeholder="0"></div>
-    </div>
-    <div class="settings-card">
-      <div class="settings-title">欄位對應</div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">任務名稱</label><input type="text" id="s-col-name" placeholder="任務名稱"></div>
-        <div class="form-group"><label class="form-label">設計師</label><input type="text" id="s-col-designer" placeholder="設計師"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">類型</label><input type="text" id="s-col-type" placeholder="類型"></div>
-        <div class="form-group"><label class="form-label">數量</label><input type="text" id="s-col-qty" placeholder="數量"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">單價</label><input type="text" id="s-col-price" placeholder="單價"></div>
-        <div class="form-group"><label class="form-label">優先度</label><input type="text" id="s-col-pri" placeholder="優先度"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">狀態</label><input type="text" id="s-col-status" placeholder="狀態"></div>
-        <div class="form-group"><label class="form-label">交期</label><input type="text" id="s-col-deadline" placeholder="交期"></div>
-      </div>
-      <div class="form-group"><label class="form-label">備註</label><input type="text" id="s-col-note" placeholder="備註"></div>
-    </div>
-  </div>
-  <div class="drawer-footer">
-    <button class="btn btn-ghost" style="flex:1" onclick="closeSettings()">取消</button>
-    <button class="btn btn-primary" style="flex:2" onclick="saveSettings()">儲存設定</button>
-  </div>
-</div>
-
-<!-- Bottom nav -->
-<nav class="bottom-nav">
-  <div class="bottom-nav-inner">
-    <button class="nav-item active" onclick="switchTab('kanban',null,this)"><span class="nav-icon">📋</span>看板</button>
-    <button class="nav-item" onclick="switchTab('cost',null,this)"><span class="nav-icon">💰</span>費用</button>
-    <button class="nav-item" onclick="switchTab('quote',null,this)"><span class="nav-icon">📊</span>報價</button>
-  </div>
-</nav>
-
 <div class="toast" id="toast"></div>
 
 <script>
-// ── Data ──
-let tasks = JSON.parse(localStorage.getItem('jtl-tasks') || '[]');
-let currentStatus = 'all';
-let editingId = null;
+var SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwkH-fB7VlXO-T09sBxMSnAiOSolxQAvUlvxQiZxS7IP37rlNdIdzm3R0U429J9siX3Gg/exec';
 
-// Quote data
-let quoteData = JSON.parse(localStorage.getItem('jtl-quote') || 'null') || {
-  cols: ['設計師', '上架包 ×1', '上架包 ×5', '官網Banner (1視覺×4尺寸)', '網購Banner (1視覺×13尺寸)'],
+var tasks = JSON.parse(localStorage.getItem('jtl-tasks') || '[]');
+var currentStatus = 'all';
+var editingId = null;
+
+var quoteData = JSON.parse(localStorage.getItem('jtl-quote') || 'null') || {
+  cols: ['設計師','上架包 ×1','上架包 ×5','官網Banner (1視覺×4尺寸)','網購Banner (1視覺×13尺寸)'],
   rows: [
-    ['Amber',   '$2,000', '$1,800', '$1,200', '—'],
-    ['Emma',    '$2,000', '待報價',  '—',      '—'],
-    ['大P',     '$2,000', '待報價',  '$2,000', '待報價'],
-    ['楊雅淳',  '—',      '—',       '$2,000', '待報價'],
-    ['Vivian',  '—',      '—',       '$2,000', '—'],
+    ['Amber','$2,000','$1,800','$1,200','—'],
+    ['Emma','$2,000','待報價','—','—'],
+    ['大P','$2,000','待報價','$2,000','待報價'],
+    ['楊雅淳','—','—','$2,000','待報價'],
+    ['Vivian','—','—','$2,000','—']
   ]
 };
 
-let officialSpecs = JSON.parse(localStorage.getItem('jtl-official') || 'null') || [
-  { platform:'PChome', items:[{no:1,size:'1200×400'},{no:2,size:'1080×1920'},{no:3,size:'1200×628',note:'要LOGO'},{no:4,size:'1040×1040'}] },
-];
-let shopSpecs = JSON.parse(localStorage.getItem('jtl-shop') || 'null') || [
-  { platform:'PChome', items:[{no:1,size:'1080×1920',limit:'<20MB'},{no:2,size:'1644×604',limit:'<395KB'},{no:3,size:'462×462',limit:'<225KB'}] },
-  { platform:'Yahoo',  items:[{no:4,size:'1200×600',limit:'<300K'},{no:5,size:'950×464',limit:'<200K'},{no:6,size:'960×450',limit:'<200K'},{no:7,size:'1080×345',limit:'<200K'}] },
-  { platform:'博客來', items:[{no:8,size:'240×240'},{no:9,size:'950×250'},{no:10,size:'621×312'}] },
-  { platform:'MOMO',   items:[{no:11,size:'818×370',limit:'<150K'},{no:12,size:'1000×300',limit:'<150K'},{no:13,size:'852×426',limit:'<150K'}] },
+var officialSpecs = JSON.parse(localStorage.getItem('jtl-official') || 'null') || [
+  {platform:'PChome', items:[{no:1,size:'1200×400',limit:''},{no:2,size:'1080×1920',limit:''},{no:3,size:'1200×628',limit:'要LOGO'},{no:4,size:'1040×1040',limit:''}]}
 ];
 
-// ── Tabs ──
-function switchTab(name, tabEl, navEl) {
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById('panel-'+name).classList.add('active');
-  if(tabEl){ document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); tabEl.classList.add('active'); }
-  if(navEl){ document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); navEl.classList.add('active'); }
-  if(name==='cost') renderCost();
-  if(name==='quote') renderQuote();
+var shopSpecs = JSON.parse(localStorage.getItem('jtl-shop') || 'null') || [
+  {platform:'PChome', items:[{no:1,size:'1080×1920',limit:'<20MB'},{no:2,size:'1644×604',limit:'<395KB'},{no:3,size:'462×462',limit:'<225KB'}]},
+  {platform:'Yahoo',  items:[{no:4,size:'1200×600',limit:'<300K'},{no:5,size:'950×464',limit:'<200K'},{no:6,size:'960×450',limit:'<200K'},{no:7,size:'1080×345',limit:'<200K'}]},
+  {platform:'博客來', items:[{no:8,size:'240×240',limit:''},{no:9,size:'950×250',limit:''},{no:10,size:'621×312',limit:''}]},
+  {platform:'MOMO',   items:[{no:11,size:'818×370',limit:'<150K'},{no:12,size:'1000×300',limit:'<150K'},{no:13,size:'852×426',limit:'<150K'}]}
+];
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2200);
 }
 
-// ── Toast ──
-function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
-
-// ── Stats ──
-function updateStats(){
-  const today = new Date(); today.setHours(0,0,0,0);
-  const overdue = tasks.filter(t=>t.status!=='已完成'&&t.deadline&&new Date(t.deadline)<today).length;
-  const inProg  = tasks.filter(t=>t.status==='進行中').length;
-  const thisMonth = new Date(); const m=thisMonth.getMonth(), y=thisMonth.getFullYear();
-  const cost = tasks.filter(t=>{
-    if(!t.deadline) return false;
-    const d=new Date(t.deadline); return d.getMonth()===m&&d.getFullYear()===y;
-  }).reduce((a,t)=>(t.price&&t.qty?a+t.price*t.qty:a),0);
-  document.getElementById('statTotal').textContent = tasks.length;
-  document.getElementById('statProgress').textContent = inProg;
-  document.getElementById('statOverdue').textContent = overdue;
-  document.getElementById('statCost').textContent = '$'+cost.toLocaleString();
-  // Filter chips
-  const statuses = ['待開始','進行中','待審核','修改中','已完成'];
-  document.getElementById('fc-all').textContent = tasks.length;
-  statuses.forEach(s=>{ const el=document.getElementById('fc-'+s); if(el) el.textContent=tasks.filter(t=>t.status===s).length; });
-  document.getElementById('fc-逾期').textContent = overdue;
+function switchTab(name, el) {
+  document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById('panel-' + name).classList.add('active');
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  el.classList.add('active');
+  if (name === 'cost') renderCost();
+  if (name === 'quote') renderQuote();
 }
 
-// ── Status badge ──
-const badgeMap = {'待開始':'badge-pending','進行中':'badge-progress','待審核':'badge-review','修改中':'badge-revision','已完成':'badge-done','逾期':'badge-overdue'};
-function statusBadge(s){ return `<span class="badge ${badgeMap[s]||'badge-pending'}">${s}</span>`; }
-function priorityDot(p){ const cls={高:'pri-high',中:'pri-mid',低:'pri-low'}; return `<span class="priority-dot ${cls[p]||'pri-mid'}"></span>`; }
-
-// ── Render table ──
-function renderTable(){
-  const today=new Date(); today.setHours(0,0,0,0);
-  const designer=document.getElementById('designerFilter').value;
-  let list = tasks.map((t,i)=>({...t,_i:i}));
-  if(currentStatus==='逾期')
-    list=list.filter(t=>t.status!=='已完成'&&t.deadline&&new Date(t.deadline)<today);
-  else if(currentStatus!=='all')
-    list=list.filter(t=>t.status===currentStatus);
-  if(designer) list=list.filter(t=>t.designer===designer);
-
-  const tbody=document.getElementById('taskBody');
-  if(!list.length){
-    tbody.innerHTML=`<tr><td colspan="9"><div class="empty-state"><div class="icon">📭</div><p>目前沒有符合條件的任務</p></div></td></tr>`;
-    return;
-  }
-  tbody.innerHTML = list.map(t=>{
-    const od = t.status!=='已完成'&&t.deadline&&new Date(t.deadline)<today;
-    const dStr = t.deadline ? new Date(t.deadline).toLocaleDateString('zh-TW',{month:'2-digit',day:'2-digit'}) : '—';
-    return `<tr class="${od?'overdue':''}">
-      <td><div class="task-name">${t.name}</div>${t.note?`<div class="task-note">${t.note}</div>`:''}</td>
-      <td>${t.designer||'—'}</td>
-      <td>${t.type||'—'}</td>
-      <td>${t.qty||1}</td>
-      <td>${priorityDot(t.priority)} ${t.priority||'中'}</td>
-      <td>${statusBadge(od?'逾期':t.status)}</td>
-      <td style="text-align:center">${t.revisions||0}</td>
-      <td style="color:${od?'var(--red)':'var(--text2)'}">${dStr}</td>
-      <td>
-        <button class="btn btn-ghost btn-sm" onclick="editTask(${t._i})">編輯</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteTask(${t._i})">刪除</button>
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-// ── Filter ──
-function filterStatus(s, el){
-  currentStatus=s;
-  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+function filterStatus(s, el) {
+  currentStatus = s;
+  document.querySelectorAll('.filter-chip').forEach(function(c) { c.classList.remove('active'); });
   el.classList.add('active');
   renderTable();
 }
 
-// ── Drawer ──
-function openDrawer(){ editingId=null; document.getElementById('drawerTitle').textContent='新增發包任務'; clearForm(); document.getElementById('drawerOverlay').classList.add('open'); document.getElementById('drawer').classList.add('open'); }
-function closeDrawer(){ document.getElementById('drawerOverlay').classList.remove('open'); document.getElementById('drawer').classList.remove('open'); }
-function clearForm(){ ['f-name','f-designer','f-type','f-qty','f-price','f-priority','f-status','f-progress','f-deadline','f-note'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=el.tagName==='SELECT'?el.options[0]?.value||'':el.type==='number'?'':el.type==='range'?0:''; }); document.getElementById('f-prog-val').textContent='0%'; }
-
-function saveTask(){
-  const name=document.getElementById('f-name').value.trim();
-  if(!name){ toast('❌ 請填入任務名稱'); return; }
-  const task={
-    name, designer:document.getElementById('f-designer').value,
-    type:document.getElementById('f-type').value,
-    qty:+document.getElementById('f-qty').value||1,
-    price:+document.getElementById('f-price').value||0,
-    priority:document.getElementById('f-priority').value,
-    status:document.getElementById('f-status').value,
-    progress:+document.getElementById('f-progress').value,
-    deadline:document.getElementById('f-deadline').value,
-    note:document.getElementById('f-note').value,
-    revisions:editingId!==null?(tasks[editingId].revisions||0):0
-  };
-  if(editingId!==null){ tasks[editingId]=task; toast('✅ 任務已更新'); }
-  else{ tasks.push(task); toast('✅ 任務已新增'); }
-  save(); closeDrawer(); renderTable(); updateStats();
-}
-
-function editTask(i){
-  editingId=i; const t=tasks[i];
-  document.getElementById('drawerTitle').textContent='編輯任務';
-  document.getElementById('f-name').value=t.name||'';
-  document.getElementById('f-designer').value=t.designer||'';
-  document.getElementById('f-type').value=t.type||'上架包';
-  document.getElementById('f-qty').value=t.qty||1;
-  document.getElementById('f-price').value=t.price||'';
-  document.getElementById('f-priority').value=t.priority||'中';
-  document.getElementById('f-status').value=t.status||'待開始';
-  document.getElementById('f-progress').value=t.progress||0;
-  document.getElementById('f-prog-val').textContent=(t.progress||0)+'%';
-  document.getElementById('f-deadline').value=t.deadline||'';
-  document.getElementById('f-note').value=t.note||'';
-  document.getElementById('drawerOverlay').classList.add('open');
-  document.getElementById('drawer').classList.add('open');
-}
-
-function deleteTask(i){ if(!confirm('確定刪除此任務？')) return; tasks.splice(i,1); save(); renderTable(); updateStats(); toast('🗑 任務已刪除'); }
-function save(){ localStorage.setItem('jtl-tasks',JSON.stringify(tasks)); }
-
-// ── Cost ──
-function renderCost(){
-  const done=tasks.filter(t=>t.status==='已完成').length;
-  const total=tasks.reduce((a,t)=>a+(t.price*t.qty||0),0);
-  const rate=tasks.length?Math.round(done/tasks.length*100):0;
-  document.getElementById('costTotal').textContent='$'+total.toLocaleString();
-  document.getElementById('costDone').textContent=done+' 件';
-  document.getElementById('costRate').textContent=rate+'%';
-  const designers=['Amber','Emma','大P','楊雅淳','Vivian'];
-  const el=document.getElementById('designerCosts');
-  el.innerHTML=designers.map(d=>{
-    const dt=tasks.filter(t=>t.designer===d);
-    const amt=dt.reduce((a,t)=>a+(t.price*t.qty||0),0);
-    const dc=dt.filter(t=>t.status==='已完成').length;
-    return `<div class="designer-row"><div><div class="designer-name">${d}</div><div class="designer-stats">共 ${dt.length} 件 · 完成 ${dc} 件</div></div><div class="designer-amount">$${amt.toLocaleString()}</div></div>`;
-  }).join('');
-}
-
-// ── Quote Table ──
-function renderQuote(){
-  // Header
-  const thead=document.getElementById('quoteHead');
-  thead.innerHTML='<tr>'+quoteData.cols.map((c,i)=>`<th style="text-align:${i?'center':'left'}">${c}<button class="add-col-btn" style="font-size:12px;margin-left:4px" onclick="delQuoteCol(${i})" title="刪除此欄">×</button></th>`).join('')+'<th></th></tr>';
-  // Body
-  const tbody=document.getElementById('quoteBody');
-  tbody.innerHTML=quoteData.rows.map((row,ri)=>`<tr>
-    ${row.map((cell,ci)=>`<td style="text-align:${ci?'center':'left'}"><input class="editable-cell" value="${cell}" onchange="quoteData.rows[${ri}][${ci}]=this.value" ${ci===0?'style="text-align:left;font-weight:500"':''}></td>`).join('')}
-    <td><button class="del-row-btn" onclick="delQuoteRow(${ri})">✕</button></td>
-  </tr>`).join('');
-
-  // Spec grids
-  renderSpecGrid('officialSpecGrid', officialSpecs);
-  renderSpecGrid('shopSpecGrid', shopSpecs);
-}
-
-function renderSpecGrid(id, data){
-  const el=document.getElementById(id);
-  el.innerHTML=data.map((platform,pi)=>`
-    <div class="spec-card">
-      <div class="spec-card-header">
-        <input class="editable-cell" style="font-size:13px;font-weight:600;text-align:left;background:transparent" value="${platform.platform}" onchange="data[${pi}].platform=this.value">
-        <button class="del-row-btn" style="opacity:1" onclick="delPlatform('${id}',${pi})">✕</button>
-      </div>
-      <table>
-        ${platform.items.map((item,ii)=>`<tr>
-          <td><input class="editable-cell" style="text-align:center;width:30px" value="${item.no}" onchange="data[${pi}].items[${ii}].no=this.value"></td>
-          <td><input class="editable-cell" style="text-align:left" value="${item.size}" onchange="data[${pi}].items[${ii}].size=this.value"></td>
-          <td><input class="editable-cell" style="text-align:left;color:var(--text3)" value="${item.limit||item.note||''}" placeholder="限制/備註" onchange="data[${pi}].items[${ii}].limit=this.value"></td>
-          <td><button class="del-row-btn" style="opacity:1" onclick="delSpecRow('${id}',${pi},${ii})">✕</button></td>
-        </tr>`).join('')}
-        <tr><td colspan="4" style="text-align:center;padding:6px"><button class="add-row-btn" onclick="addSpecItemRow('${id}',${pi})">＋</button></td></tr>
-      </table>
-    </div>`).join('');
-}
-
-function addQuoteRow(){
-  const empty=Array(quoteData.cols.length).fill('—');
-  empty[0]='新設計師'; quoteData.rows.push(empty); renderQuote();
-}
-function addQuoteCol(){
-  const name=prompt('新品項名稱：',''); if(!name) return;
-  quoteData.cols.push(name);
-  quoteData.rows.forEach(r=>r.push('待報價'));
-  renderQuote();
-}
-function delQuoteCol(ci){ if(quoteData.cols.length<=1) return; quoteData.cols.splice(ci,1); quoteData.rows.forEach(r=>r.splice(ci,1)); renderQuote(); }
-function delQuoteRow(ri){ quoteData.rows.splice(ri,1); renderQuote(); }
-function saveQuote(){
-  localStorage.setItem('jtl-quote',JSON.stringify(quoteData));
-  localStorage.setItem('jtl-official',JSON.stringify(officialSpecs));
-  localStorage.setItem('jtl-shop',JSON.stringify(shopSpecs));
-  toast('✅ 報價規格已儲存');
-}
-
-function addSpecRow(type){
-  const name=prompt('平台名稱：',''); if(!name) return;
-  const data = type==='official'?officialSpecs:shopSpecs;
-  data.push({platform:name, items:[]});
-  renderQuote();
-}
-function delPlatform(gridId, pi){
-  if(gridId==='officialSpecGrid') officialSpecs.splice(pi,1);
-  else shopSpecs.splice(pi,1);
-  renderQuote();
-}
-function addSpecItemRow(gridId, pi){
-  const data = gridId==='officialSpecGrid'?officialSpecs:shopSpecs;
-  const no=(data[pi].items.length+1);
-  data[pi].items.push({no,size:'',limit:''});
-  renderQuote();
-}
-function delSpecRow(gridId, pi, ii){
-  const data = gridId==='officialSpecGrid'?officialSpecs:shopSpecs;
-  data[pi].items.splice(ii,1);
-  renderQuote();
-}
-
-// ── Settings ──
-function openSettings(){ document.getElementById('settingsOverlay').classList.add('open'); document.getElementById('settingsDrawer').classList.add('open'); }
-function closeSettings(){ document.getElementById('settingsOverlay').classList.remove('open'); document.getElementById('settingsDrawer').classList.remove('open'); }
-function saveSettings(){ toast('✅ 設定已儲存'); closeSettings(); }
-
-// ── Google Sheets sync ──
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkH-fB7VlXO-T09sBxMSnAiOSolxQAvUlvxQiZxS7IP37rlNdIdzm3R0U429J9siX3Gg/exec';
-
-function syncSheets(){
-  const btn = document.querySelector('[onclick="syncSheets()"]');
-  if(btn){ btn.textContent='⏳ 同步中…'; btn.disabled=true; }
-  toast('⏳ 正在從 Google Sheets 拉取資料…');
-
-  // 用 JSONP 繞過 CORS
-  const cbName = '__jtlCb_' + Date.now();
-  const script = document.createElement('script');
-  const timeout = setTimeout(()=>{
-    delete window[cbName]; script.remove();
-    if(btn){ btn.textContent='⬇ 從 Sheets 匯入'; btn.disabled=false; }
-    toast('❌ 同步逾時，請確認 Apps Script 已部署為「所有人可存取」');
-  }, 10000);
-
-  window[cbName] = function(raw){
-    clearTimeout(timeout);
-    delete window[cbName]; script.remove();
-    if(btn){ btn.textContent='⬇ 從 Sheets 匯入'; btn.disabled=false; }
-    try {
-
-    // 支援兩種格式：
-    // 1. { data: [...] }  2. 直接是 array [...]
-    // 你的 Apps Script 回傳格式：{ ok: true, rows: [...] }
-    if(!raw.ok){ toast('❌ Sheets 回傳錯誤：' + (raw.error || '未知錯誤')); return; }
-    const rows = raw.rows || [];
-
-    if(!rows.length){ toast('⚠️ Sheets 回傳空資料，請確認工作表有資料'); return; }
-
-    // 欄位對應：designer / date / type / name / unitprice / qty / total
-    const imported = rows.map(row => {
-      const unitprice = Number(String(row.unitprice||'').replace(/[$,]/g,'')) || 0;
-      const qty       = Number(row.qty) || 1;
-      return {
-        name:      String(row.name      || '').trim() || '未命名任務',
-        designer:  String(row.designer  || '').trim(),
-        type:      String(row.type      || '').trim() || '其他',
-        qty,
-        price:     unitprice,
-        // total 欄位備查，不另存（qty × price 自動算）
-        priority:  '中',           // Sheets 無此欄，預設中
-        status:    '待開始',       // Sheets 無此欄，預設待開始
-        progress:  0,
-        deadline:  normalizeDate(String(row.date || '').trim()),
-        note:      '',
-        revisions: 0,
-      };
-    });
-
-    // 覆蓋或合併（目前選擇覆蓋，可改為 merge）
-    tasks = imported;
-    save();
-    renderTable();
-    updateStats();
-    toast(`✅ 已匯入 ${imported.length} 筆資料`);
-  } catch(err) {
-    console.error(err);
-    toast('❌ 同步失敗：' + err.message);
-  } finally {
-    if(btn){ btn.textContent='⬇ 從 Sheets 匯入'; btn.disabled=false; }
+function normalizeDate(str) {
+  if (!str) return '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+  if (/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(str)) {
+    var p = str.split('/');
+    return p[0] + '-' + p[1].padStart(2,'0') + '-' + p[2].padStart(2,'0');
   }
-}
-
-// 日期格式標準化（處理 YYYY/MM/DD、MM/DD、各種斜線格式）
-function normalizeDate(str){
-  if(!str) return '';
-  // 已經是 YYYY-MM-DD
-  if(/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
-  // YYYY/MM/DD
-  if(/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(str)){
-    const [y,m,d] = str.split('/');
-    return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
-  }
-  // MM/DD（補年份）
-  if(/^\d{1,2}\/\d{1,2}$/.test(str)){
-    const [m,d] = str.split('/');
-    return `${new Date().getFullYear()}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+  if (/^\d{1,2}\/\d{1,2}$/.test(str)) {
+    var p2 = str.split('/');
+    return new Date().getFullYear() + '-' + p2[0].padStart(2,'0') + '-' + p2[1].padStart(2,'0');
   }
   return '';
 }
 
-function importCSV(){
-  const input = document.createElement('input');
-  input.type = 'file'; input.accept = '.csv';
-  input.onchange = e => {
-    const file = e.target.files[0]; if(!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      try {
-        const lines = ev.target.result.split('\n').filter(l=>l.trim());
-        const headers = lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,''));
-        const rows = lines.slice(1).map(line=>{
-          const vals = line.split(',').map(v=>v.trim().replace(/^"|"$/g,''));
-          const obj = {};
-          headers.forEach((h,i)=>{ obj[h]=vals[i]||''; });
-          return obj;
-        });
-        // 直接走 syncSheets 的解析邏輯，複用 pick
-        const pick=(row,...keys)=>{ for(const k of keys){ const f=Object.keys(row).find(rk=>rk.trim().toLowerCase()===k.toLowerCase()); if(f!==undefined&&row[f]!=='') return String(row[f]).trim(); } return ''; };
-        tasks = rows.map(row=>({
-          name:pick(row,'任務名稱','task','name','title')||'未命名',
-          designer:pick(row,'設計師','designer'),
-          type:pick(row,'類型','type','品項類型')||'其他',
-          qty:Number(pick(row,'數量','qty','quantity'))||1,
-          price:Number(pick(row,'單價','price'))||0,
-          priority:pick(row,'優先度','priority')||'中',
-          status:pick(row,'狀態','status')||'待開始',
-          progress:Number(pick(row,'進度%','progress'))||0,
-          deadline:normalizeDate(pick(row,'交期','deadline','due')),
-          note:pick(row,'備註','note'),
-          revisions:Number(pick(row,'修改次數','revisions'))||0,
-        }));
-        save(); renderTable(); updateStats();
-        toast(`✅ CSV 已匯入 ${tasks.length} 筆`);
-      } catch(err){ toast('❌ CSV 解析失敗：'+err.message); }
+function updateStats() {
+  var today = new Date(); today.setHours(0,0,0,0);
+  var overdue = tasks.filter(function(t) { return t.status !== '已完成' && t.deadline && new Date(t.deadline) < today; }).length;
+  var inProg  = tasks.filter(function(t) { return t.status === '進行中'; }).length;
+  var now = new Date();
+  var cost = tasks.reduce(function(a, t) { return a + ((t.price || 0) * (t.qty || 1)); }, 0);
+  document.getElementById('statTotal').textContent = tasks.length;
+  document.getElementById('statProgress').textContent = inProg;
+  document.getElementById('statOverdue').textContent = overdue;
+  document.getElementById('statCost').textContent = '$' + cost.toLocaleString();
+  var statuses = ['待開始','進行中','待審核','修改中','已完成'];
+  document.getElementById('fc-all').textContent = tasks.length;
+  statuses.forEach(function(s, i) {
+    var el = document.getElementById('fc-' + i);
+    if (el) el.textContent = tasks.filter(function(t) { return t.status === s; }).length;
+  });
+  document.getElementById('fc-5').textContent = overdue;
+}
+
+function statusBadge(s) {
+  var map = {'待開始':'badge-pending','進行中':'badge-progress','待審核':'badge-review','修改中':'badge-revision','已完成':'badge-done','逾期':'badge-overdue'};
+  return '<span class="badge ' + (map[s] || 'badge-pending') + '">' + s + '</span>';
+}
+
+function priDot(p) {
+  var cls = {高:'pri-high',中:'pri-mid',低:'pri-low'};
+  return '<span class="priority-dot ' + (cls[p] || 'pri-mid') + '"></span>' + (p || '中');
+}
+
+function renderTable() {
+  var today = new Date(); today.setHours(0,0,0,0);
+  var designer = document.getElementById('designerFilter').value;
+  var list = tasks.map(function(t, i) { return Object.assign({}, t, {_i: i}); });
+
+  if (currentStatus === '逾期') {
+    list = list.filter(function(t) { return t.status !== '已完成' && t.deadline && new Date(t.deadline) < today; });
+  } else if (currentStatus !== 'all') {
+    list = list.filter(function(t) { return t.status === currentStatus; });
+  }
+  if (designer) list = list.filter(function(t) { return t.designer === designer; });
+
+  var tbody = document.getElementById('taskBody');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">📭</div><div>目前沒有符合條件的任務</div></div></td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = list.map(function(t) {
+    var od = t.status !== '已完成' && t.deadline && new Date(t.deadline) < today;
+    var dStr = t.deadline ? t.deadline : '—';
+    return '<tr class="' + (od ? 'overdue' : '') + '">' +
+      '<td><div class="task-name">' + t.name + '</div>' + (t.note ? '<div class="task-note">' + t.note + '</div>' : '') + '</td>' +
+      '<td>' + (t.designer || '—') + '</td>' +
+      '<td>' + (t.type || '—') + '</td>' +
+      '<td>' + (t.qty || 1) + '</td>' +
+      '<td>' + priDot(t.priority) + '</td>' +
+      '<td>' + statusBadge(od ? '逾期' : t.status) + '</td>' +
+      '<td style="text-align:center">' + (t.revisions || 0) + '</td>' +
+      '<td style="color:' + (od ? 'var(--red)' : 'var(--text2)') + '">' + dStr + '</td>' +
+      '<td><button class="btn btn-ghost btn-sm" onclick="editTask(' + t._i + ')">編輯</button> ' +
+      '<button class="btn btn-danger btn-sm" onclick="deleteTask(' + t._i + ')">刪除</button></td>' +
+      '</tr>';
+  }).join('');
+}
+
+function openDrawer() {
+  editingId = null;
+  document.getElementById('drawerTitle').textContent = '新增發包任務';
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-designer').value = '';
+  document.getElementById('f-type').value = '上架包';
+  document.getElementById('f-qty').value = 1;
+  document.getElementById('f-price').value = '';
+  document.getElementById('f-priority').value = '中';
+  document.getElementById('f-status').value = '待開始';
+  document.getElementById('f-progress').value = 0;
+  document.getElementById('progVal').textContent = '0%';
+  document.getElementById('f-deadline').value = '';
+  document.getElementById('f-note').value = '';
+  document.getElementById('taskOverlay').classList.add('open');
+  document.getElementById('taskDrawer').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('taskOverlay').classList.remove('open');
+  document.getElementById('taskDrawer').classList.remove('open');
+}
+
+function saveTask() {
+  var name = document.getElementById('f-name').value.trim();
+  if (!name) { showToast('❌ 請填入任務名稱'); return; }
+  var task = {
+    name: name,
+    designer: document.getElementById('f-designer').value,
+    type: document.getElementById('f-type').value,
+    qty: Number(document.getElementById('f-qty').value) || 1,
+    price: Number(document.getElementById('f-price').value) || 0,
+    priority: document.getElementById('f-priority').value,
+    status: document.getElementById('f-status').value,
+    progress: Number(document.getElementById('f-progress').value) || 0,
+    deadline: document.getElementById('f-deadline').value,
+    note: document.getElementById('f-note').value,
+    revisions: editingId !== null ? (tasks[editingId].revisions || 0) : 0
+  };
+  if (editingId !== null) {
+    tasks[editingId] = task;
+    showToast('✅ 任務已更新');
+  } else {
+    tasks.push(task);
+    showToast('✅ 任務已新增');
+  }
+  localStorage.setItem('jtl-tasks', JSON.stringify(tasks));
+  closeDrawer();
+  renderTable();
+  updateStats();
+}
+
+function editTask(i) {
+  editingId = i;
+  var t = tasks[i];
+  document.getElementById('drawerTitle').textContent = '編輯任務';
+  document.getElementById('f-name').value = t.name || '';
+  document.getElementById('f-designer').value = t.designer || '';
+  document.getElementById('f-type').value = t.type || '上架包';
+  document.getElementById('f-qty').value = t.qty || 1;
+  document.getElementById('f-price').value = t.price || '';
+  document.getElementById('f-priority').value = t.priority || '中';
+  document.getElementById('f-status').value = t.status || '待開始';
+  document.getElementById('f-progress').value = t.progress || 0;
+  document.getElementById('progVal').textContent = (t.progress || 0) + '%';
+  document.getElementById('f-deadline').value = t.deadline || '';
+  document.getElementById('f-note').value = t.note || '';
+  document.getElementById('taskOverlay').classList.add('open');
+  document.getElementById('taskDrawer').classList.add('open');
+}
+
+function deleteTask(i) {
+  if (!confirm('確定刪除此任務？')) return;
+  tasks.splice(i, 1);
+  localStorage.setItem('jtl-tasks', JSON.stringify(tasks));
+  renderTable();
+  updateStats();
+  showToast('🗑 任務已刪除');
+}
+
+function renderCost() {
+  var done = tasks.filter(function(t) { return t.status === '已完成'; }).length;
+  var total = tasks.reduce(function(a, t) { return a + ((t.price || 0) * (t.qty || 1)); }, 0);
+  var rate = tasks.length ? Math.round(done / tasks.length * 100) : 0;
+  document.getElementById('costTotal').textContent = '$' + total.toLocaleString();
+  document.getElementById('costDone').textContent = done + ' 件';
+  document.getElementById('costRate').textContent = rate + '%';
+  var designers = ['Amber','Emma','大P','楊雅淳','Vivian'];
+  document.getElementById('designerCosts').innerHTML = designers.map(function(d) {
+    var dt = tasks.filter(function(t) { return t.designer === d; });
+    var amt = dt.reduce(function(a, t) { return a + ((t.price || 0) * (t.qty || 1)); }, 0);
+    var dc = dt.filter(function(t) { return t.status === '已完成'; }).length;
+    return '<div class="designer-row"><div><div class="dname">' + d + '</div><div class="dstats">共 ' + dt.length + ' 件 · 完成 ' + dc + ' 件</div></div><div class="damount">$' + amt.toLocaleString() + '</div></div>';
+  }).join('');
+}
+
+function renderQuote() {
+  var thead = document.getElementById('quoteHead');
+  thead.innerHTML = '<tr>' + quoteData.cols.map(function(c, i) {
+    return '<th style="text-align:' + (i ? 'center' : 'left') + '">' + c +
+      ' <button onclick="delQuoteCol(' + i + ')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:11px;" title="刪除">×</button></th>';
+  }).join('') + '<th></th></tr>';
+
+  var tbody = document.getElementById('quoteBody');
+  tbody.innerHTML = quoteData.rows.map(function(row, ri) {
+    return '<tr>' + row.map(function(cell, ci) {
+      return '<td style="text-align:' + (ci ? 'center' : 'left') + '">' +
+        '<input class="editable-cell" value="' + cell + '" ' + (ci === 0 ? 'style="text-align:left;font-weight:500"' : '') +
+        ' onchange="quoteData.rows[' + ri + '][' + ci + ']=this.value"></td>';
+    }).join('') + '<td><button class="del-row-btn" onclick="delQuoteRow(' + ri + ')">✕</button></td></tr>';
+  }).join('');
+
+  renderSpecGrid('officialGrid', officialSpecs);
+  renderSpecGrid('shopGrid', shopSpecs);
+}
+
+function renderSpecGrid(gridId, data) {
+  var el = document.getElementById(gridId);
+  el.innerHTML = data.map(function(platform, pi) {
+    var rows = platform.items.map(function(item, ii) {
+      return '<tr>' +
+        '<td><input class="editable-cell" style="width:30px;text-align:center" value="' + item.no + '" onchange="getSpec(\'' + gridId + '\',' + pi + ').items[' + ii + '].no=this.value"></td>' +
+        '<td><input class="editable-cell" style="text-align:left" value="' + item.size + '" onchange="getSpec(\'' + gridId + '\',' + pi + ').items[' + ii + '].size=this.value"></td>' +
+        '<td><input class="editable-cell" style="text-align:left" value="' + (item.limit || '') + '" placeholder="限制/備註" onchange="getSpec(\'' + gridId + '\',' + pi + ').items[' + ii + '].limit=this.value"></td>' +
+        '<td><button class="del-row-btn" style="opacity:1" onclick="delSpecItem(\'' + gridId + '\',' + pi + ',' + ii + ')">✕</button></td>' +
+        '</tr>';
+    }).join('');
+    return '<div class="spec-card">' +
+      '<div class="spec-card-header">' +
+      '<input class="editable-cell" style="text-align:left;font-size:13px;font-weight:600;background:transparent" value="' + platform.platform + '" onchange="getSpec(\'' + gridId + '\',' + pi + ').platform=this.value">' +
+      '<button class="spec-del" onclick="delPlatform(\'' + gridId + '\',' + pi + ')">✕</button>' +
+      '</div>' +
+      '<table>' + rows +
+      '<tr><td colspan="4"><button class="add-item-btn" onclick="addSpecItem(\'' + gridId + '\',' + pi + ')">＋</button></td></tr>' +
+      '</table></div>';
+  }).join('');
+}
+
+function getSpec(gridId, pi) {
+  return gridId === 'officialGrid' ? officialSpecs[pi] : shopSpecs[pi];
+}
+
+function addQuoteRow() {
+  var empty = quoteData.cols.map(function() { return '—'; });
+  empty[0] = '新設計師';
+  quoteData.rows.push(empty);
+  renderQuote();
+}
+
+function addQuoteCol() {
+  var name = prompt('新品項名稱：');
+  if (!name) return;
+  quoteData.cols.push(name);
+  quoteData.rows.forEach(function(r) { r.push('待報價'); });
+  renderQuote();
+}
+
+function delQuoteCol(ci) {
+  if (quoteData.cols.length <= 1) return;
+  quoteData.cols.splice(ci, 1);
+  quoteData.rows.forEach(function(r) { r.splice(ci, 1); });
+  renderQuote();
+}
+
+function delQuoteRow(ri) {
+  quoteData.rows.splice(ri, 1);
+  renderQuote();
+}
+
+function saveQuote() {
+  localStorage.setItem('jtl-quote', JSON.stringify(quoteData));
+  localStorage.setItem('jtl-official', JSON.stringify(officialSpecs));
+  localStorage.setItem('jtl-shop', JSON.stringify(shopSpecs));
+  showToast('✅ 報價規格已儲存');
+}
+
+function addPlatform(type) {
+  var name = prompt('平台名稱：');
+  if (!name) return;
+  if (type === 'official') officialSpecs.push({platform: name, items: []});
+  else shopSpecs.push({platform: name, items: []});
+  renderQuote();
+}
+
+function delPlatform(gridId, pi) {
+  if (gridId === 'officialGrid') officialSpecs.splice(pi, 1);
+  else shopSpecs.splice(pi, 1);
+  renderQuote();
+}
+
+function addSpecItem(gridId, pi) {
+  var data = gridId === 'officialGrid' ? officialSpecs : shopSpecs;
+  data[pi].items.push({no: data[pi].items.length + 1, size: '', limit: ''});
+  renderQuote();
+}
+
+function delSpecItem(gridId, pi, ii) {
+  var data = gridId === 'officialGrid' ? officialSpecs : shopSpecs;
+  data[pi].items.splice(ii, 1);
+  renderQuote();
+}
+
+function syncSheets() {
+  var btn = document.querySelector('[onclick="syncSheets()"]');
+  if (btn) { btn.textContent = '⏳ 同步中…'; btn.disabled = true; }
+  showToast('⏳ 正在從 Google Sheets 拉取資料…');
+
+  var cbName = '__jtlCb' + Date.now();
+  var script = document.createElement('script');
+
+  var timer = setTimeout(function() {
+    delete window[cbName];
+    if (script.parentNode) script.parentNode.removeChild(script);
+    if (btn) { btn.textContent = '⬇ 從 Sheets 匯入'; btn.disabled = false; }
+    showToast('❌ 同步逾時，請確認 Apps Script 已部署為「所有人可存取」');
+  }, 10000);
+
+  window[cbName] = function(raw) {
+    clearTimeout(timer);
+    delete window[cbName];
+    if (script.parentNode) script.parentNode.removeChild(script);
+    if (btn) { btn.textContent = '⬇ 從 Sheets 匯入'; btn.disabled = false; }
+    if (!raw || !raw.ok) {
+      showToast('❌ Sheets 回傳錯誤');
+      return;
+    }
+    var rows = raw.rows || [];
+    if (!rows.length) { showToast('⚠️ Sheets 無資料'); return; }
+    tasks = rows.map(function(row) {
+      var price = Number(String(row.unitprice || '').replace(/[$,]/g, '')) || 0;
+      var qty = Number(row.qty) || 1;
+      return {
+        name:      String(row.name     || '').trim() || '未命名任務',
+        designer:  String(row.designer || '').trim(),
+        type:      String(row.type     || '').trim() || '其他',
+        qty:       qty,
+        price:     price,
+        priority:  '中',
+        status:    '待開始',
+        progress:  0,
+        deadline:  normalizeDate(String(row.date || '').trim()),
+        note:      '',
+        revisions: 0
+      };
+    });
+    localStorage.setItem('jtl-tasks', JSON.stringify(tasks));
+    renderTable();
+    updateStats();
+    showToast('✅ 已匯入 ' + tasks.length + ' 筆資料');
+  };
+
+  script.onerror = function() {
+    clearTimeout(timer);
+    delete window[cbName];
+    if (btn) { btn.textContent = '⬇ 從 Sheets 匯入'; btn.disabled = false; }
+    showToast('❌ 無法載入，請確認 Apps Script 部署設定');
+  };
+
+  script.src = SHEETS_URL + '?callback=' + cbName;
+  document.head.appendChild(script);
+}
+
+function importCSV() {
+  var input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.csv';
+  input.onchange = function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      var lines = ev.target.result.split('\n').filter(function(l) { return l.trim(); });
+      var headers = lines[0].split(',').map(function(h) { return h.trim().replace(/^"|"$/g, ''); });
+      var rows = lines.slice(1).map(function(line) {
+        var vals = line.split(',').map(function(v) { return v.trim().replace(/^"|"$/g, ''); });
+        var obj = {};
+        headers.forEach(function(h, i) { obj[h] = vals[i] || ''; });
+        return obj;
+      });
+      tasks = rows.map(function(row) {
+        return {
+          name:      row['任務名稱'] || row['name'] || '未命名',
+          designer:  row['設計師']  || row['designer'] || '',
+          type:      row['類型']    || row['type'] || '其他',
+          qty:       Number(row['數量'] || row['qty']) || 1,
+          price:     Number(row['單價'] || row['price']) || 0,
+          priority:  row['優先度']  || '中',
+          status:    row['狀態']    || '待開始',
+          progress:  Number(row['進度'] || 0),
+          deadline:  normalizeDate(row['交期'] || row['deadline'] || ''),
+          note:      row['備註']    || '',
+          revisions: 0
+        };
+      });
+      localStorage.setItem('jtl-tasks', JSON.stringify(tasks));
+      renderTable();
+      updateStats();
+      showToast('✅ CSV 已匯入 ' + tasks.length + ' 筆');
     };
-    reader.readAsText(file,'UTF-8');
+    reader.readAsText(file, 'UTF-8');
   };
   input.click();
 }
 
-// ── Init ──
 updateStats();
 renderTable();
 </script>
