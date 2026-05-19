@@ -3,1493 +3,879 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>杰拓設計發包管理系統</title>
+<title>DISPATCH // 杰拓設計發包管理</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+:root {
+  --bg: #0f1117;
+  --bg2: #1a1d27;
+  --bg3: #222536;
+  --bg4: #2a2e42;
+  --border: #2e3350;
+  --accent: #4f7cff;
+  --accent2: #ff6b35;
+  --green: #22c55e;
+  --yellow: #f59e0b;
+  --red: #ef4444;
+  --purple: #a855f7;
+  --text: #e8eaf0;
+  --text2: #8b90a8;
+  --text3: #5a5f7a;
+  --card-radius: 12px;
+  --font: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:var(--font); min-height:100vh; }
 
-  :root {
-    --bg: #0d0d0d;
-    --surface: #161616;
-    --surface2: #1e1e1e;
-    --border: #2a2a2a;
-    --accent: #e8ff4a;
-    --accent2: #4affb4;
-    --accent3: #ff6b4a;
-    --text: #f0f0f0;
-    --muted: #666;
-    --danger: #ff4a6b;
-    --warning: #ffaa4a;
-    --success: #4affb4;
-  }
+/* ── Header ── */
+header {
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  padding:0 24px;
+  display:flex; align-items:center; justify-content:space-between;
+  height:60px; position:sticky; top:0; z-index:100;
+}
+.logo { display:flex; align-items:center; gap:10px; }
+.logo-badge {
+  background:linear-gradient(135deg,var(--accent),#7c3aed);
+  color:#fff; font-size:11px; font-weight:700; letter-spacing:2px;
+  padding:4px 10px; border-radius:6px;
+}
+.logo-text { font-size:13px; color:var(--text2); letter-spacing:1px; }
+.header-actions { display:flex; gap:8px; align-items:center; }
+.btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; border:none; transition:all .2s; }
+.btn-primary { background:var(--accent); color:#fff; }
+.btn-primary:hover { background:#3d6ae8; }
+.btn-ghost { background:transparent; color:var(--text2); border:1px solid var(--border); }
+.btn-ghost:hover { background:var(--bg3); color:var(--text); }
+.btn-sm { padding:5px 10px; font-size:12px; }
+.btn-danger { background:#ef444420; color:var(--red); border:1px solid #ef444440; }
+.btn-danger:hover { background:#ef444435; }
+.btn-success { background:#22c55e20; color:var(--green); border:1px solid #22c55e40; }
+.btn-success:hover { background:#22c55e35; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── Stats ── */
+.stats-bar {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:12px;
+  padding:20px 24px 0;
+}
+.stat-card {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:var(--card-radius); padding:18px 20px;
+  display:flex; align-items:center; gap:14px;
+}
+.stat-icon {
+  width:42px; height:42px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;
+}
+.stat-label { font-size:11px; color:var(--text2); margin-bottom:4px; letter-spacing:.5px; text-transform:uppercase; }
+.stat-value { font-size:26px; font-weight:700; letter-spacing:-1px; }
+.stat-sub { font-size:11px; color:var(--text3); margin-top:2px; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Noto Sans TC', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+/* ── Tabs ── */
+.tabs-wrap { padding:20px 24px 0; }
+.tabs {
+  display:flex; gap:2px; background:var(--bg2);
+  border:1px solid var(--border); border-radius:10px; padding:4px; width:fit-content;
+}
+.tab {
+  padding:8px 20px; border-radius:7px; font-size:13px; font-weight:500;
+  cursor:pointer; color:var(--text2); transition:all .2s; border:none; background:transparent;
+}
+.tab.active { background:var(--bg4); color:var(--text); }
+.tab:hover:not(.active) { color:var(--text); }
 
-  /* HEADER */
-  header {
-    border-bottom: 1px solid var(--border);
-    padding: 16px 28px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    background: var(--bg);
-    z-index: 100;
-  }
-  .logo {
-    font-family: 'Space Mono', monospace;
-    font-size: 13px;
-    letter-spacing: 0.15em;
-    color: var(--accent);
-    text-transform: uppercase;
-  }
-  .header-stats {
-    display: flex;
-    gap: 24px;
-  }
-  .stat-pill {
-    font-size: 11px;
-    font-family: 'Space Mono', monospace;
-    color: var(--muted);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .stat-pill span { color: var(--text); font-weight: 700; }
+/* ── Main content ── */
+.content { padding:16px 24px 80px; }
+.panel { display:none; }
+.panel.active { display:block; }
 
-  /* TABS */
-  .tabs {
-    display: flex;
-    gap: 0;
-    border-bottom: 1px solid var(--border);
-    padding: 0 28px;
-    background: var(--bg);
-  }
-  .tab-btn {
-    padding: 10px 20px;
-    border: none;
-    background: none;
-    color: var(--muted);
-    font-family: 'Noto Sans TC', sans-serif;
-    font-size: 13px;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
-    transition: all 0.15s;
-  }
-  .tab-btn:hover { color: var(--text); }
-  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+/* ── Kanban toolbar ── */
+.toolbar {
+  display:flex; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap;
+}
+.filter-group { display:flex; gap:6px; flex-wrap:wrap; }
+.filter-chip {
+  padding:5px 12px; border-radius:20px; font-size:12px; font-weight:500;
+  cursor:pointer; border:1px solid var(--border); background:var(--bg2); color:var(--text2);
+  transition:all .2s;
+}
+.filter-chip.active { border-color:var(--accent); color:var(--accent); background:#4f7cff15; }
+.filter-chip:hover:not(.active) { border-color:var(--text3); color:var(--text); }
+select.filter-select {
+  padding:6px 12px; border-radius:8px; background:var(--bg2); color:var(--text2);
+  border:1px solid var(--border); font-size:13px; cursor:pointer; outline:none;
+}
+select.filter-select:focus { border-color:var(--accent); color:var(--text); }
+.toolbar-right { margin-left:auto; }
 
-  /* MAIN LAYOUT */
-  .layout {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    min-height: calc(100vh - 97px);
-  }
+/* ── Table ── */
+.table-wrap {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:var(--card-radius); overflow:hidden;
+}
+table { width:100%; border-collapse:collapse; }
+thead tr { background:var(--bg3); }
+th {
+  padding:12px 14px; text-align:left; font-size:11px; font-weight:600;
+  color:var(--text2); letter-spacing:.8px; text-transform:uppercase;
+  border-bottom:1px solid var(--border); white-space:nowrap;
+}
+td {
+  padding:12px 14px; font-size:13px; border-bottom:1px solid var(--border);
+  vertical-align:middle;
+}
+tbody tr:last-child td { border-bottom:none; }
+tbody tr:hover { background:#ffffff05; }
+.task-name { font-weight:500; color:var(--text); }
+.task-note { font-size:11px; color:var(--text3); margin-top:2px; }
 
-  /* SIDEBAR */
-  .sidebar {
-    border-right: 1px solid var(--border);
-    padding: 20px 0;
-  }
-  .sidebar-section {
-    padding: 0 16px;
-    margin-bottom: 28px;
-  }
-  .sidebar-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
+/* ── Badges ── */
+.badge {
+  display:inline-flex; align-items:center; gap:4px;
+  padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap;
+}
+.badge::before { content:''; width:5px; height:5px; border-radius:50%; background:currentColor; opacity:.8; }
+.badge-pending   { background:#f59e0b15; color:#f59e0b; }
+.badge-progress  { background:#4f7cff15; color:#4f7cff; }
+.badge-review    { background:#a855f715; color:#a855f7; }
+.badge-revision  { background:#ff6b3515; color:#ff6b35; }
+.badge-done      { background:#22c55e15; color:#22c55e; }
+.badge-overdue   { background:#ef444415; color:#ef4444; }
 
-  .designer-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.15s;
-    margin-bottom: 3px;
-    border: 1px solid transparent;
-  }
-  .designer-item:hover { background: var(--surface2); }
-  .designer-item.active { background: var(--surface2); border-color: var(--border); }
-  .designer-avatar {
-    width: 30px; height: 30px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Space Mono', monospace;
-    font-size: 10px; font-weight: 700;
-    flex-shrink: 0;
-  }
-  .designer-info { flex: 1; min-width: 0; }
-  .designer-name { font-size: 13px; font-weight: 500; }
-  .designer-sub { font-size: 10px; color: var(--muted); margin-top: 1px; }
-  .designer-count {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 2px 5px;
-  }
+.priority-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
+.pri-high { background:var(--red); box-shadow:0 0 6px var(--red); }
+.pri-mid  { background:var(--yellow); }
+.pri-low  { background:var(--text3); }
 
-  .filter-btn {
-    display: flex; align-items: center; gap: 8px;
-    width: 100%; padding: 7px 10px;
-    border-radius: 6px; border: none; background: none;
-    color: var(--muted);
-    font-family: 'Noto Sans TC', sans-serif; font-size: 13px;
-    cursor: pointer; text-align: left;
-    transition: all 0.15s; margin-bottom: 2px;
-  }
-  .filter-btn:hover { background: var(--surface2); color: var(--text); }
-  .filter-btn.active { background: var(--surface2); color: var(--text); }
-  .filter-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-  .filter-btn-count { margin-left: auto; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); }
+/* ── Empty state ── */
+.empty-state {
+  text-align:center; padding:60px 20px; color:var(--text3);
+}
+.empty-state .icon { font-size:40px; margin-bottom:12px; opacity:.4; }
+.empty-state p { font-size:14px; }
 
-  /* MAIN CONTENT */
-  .main { padding: 22px 26px; overflow-y: auto; }
+/* ── Side Drawer ── */
+.drawer-overlay {
+  position:fixed; inset:0; background:#00000070; z-index:200;
+  opacity:0; pointer-events:none; transition:opacity .25s;
+}
+.drawer-overlay.open { opacity:1; pointer-events:all; }
+.drawer {
+  position:fixed; right:0; top:0; bottom:0; width:420px;
+  background:var(--bg2); border-left:1px solid var(--border);
+  z-index:201; transform:translateX(100%); transition:transform .3s cubic-bezier(.4,0,.2,1);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.drawer.open { transform:translateX(0); }
+.drawer-header {
+  padding:20px 24px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
+}
+.drawer-title { font-size:16px; font-weight:600; }
+.drawer-close { background:none; border:none; color:var(--text2); font-size:20px; cursor:pointer; line-height:1; padding:4px; }
+.drawer-close:hover { color:var(--text); }
+.drawer-body { flex:1; overflow-y:auto; padding:24px; }
+.drawer-footer {
+  padding:16px 24px; border-top:1px solid var(--border);
+  display:flex; gap:8px; flex-shrink:0;
+}
 
-  /* SUMMARY CARDS */
-  .summary-row {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 12px; margin-bottom: 20px;
-  }
-  .summary-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 8px; padding: 14px;
-  }
-  .summary-card-label { font-size: 10px; color: var(--muted); margin-bottom: 6px; font-family: 'Space Mono', monospace; letter-spacing: 0.05em; }
-  .summary-card-value { font-size: 24px; font-weight: 700; font-family: 'Space Mono', monospace; line-height: 1; }
-  .summary-card-sub { font-size: 10px; color: var(--muted); margin-top: 5px; }
+/* ── Form ── */
+.form-group { margin-bottom:18px; }
+label.form-label { display:block; font-size:12px; font-weight:500; color:var(--text2); margin-bottom:6px; letter-spacing:.4px; }
+input[type=text], input[type=number], input[type=date], select, textarea {
+  width:100%; padding:9px 12px; background:var(--bg3); border:1px solid var(--border);
+  border-radius:8px; color:var(--text); font-size:13px; outline:none; font-family:var(--font);
+  transition:border .2s;
+}
+input:focus, select:focus, textarea:focus { border-color:var(--accent); }
+textarea { resize:vertical; min-height:72px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.range-wrap { display:flex; align-items:center; gap:8px; }
+input[type=range] { flex:1; accent-color:var(--accent); }
+.range-val { font-size:13px; color:var(--accent); font-weight:600; min-width:30px; text-align:right; }
 
-  /* TABLE */
-  .table-wrapper {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; overflow: hidden;
-  }
-  .table-header-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 13px 18px; border-bottom: 1px solid var(--border);
-  }
-  .table-header-row h2 { font-size: 13px; font-weight: 600; }
+/* ── Cost panel ── */
+.cost-summary {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px;
+}
+.cost-card {
+  background:var(--bg2); border:1px solid var(--border); border-radius:var(--card-radius);
+  padding:20px; text-align:center;
+}
+.cost-card .amount { font-size:28px; font-weight:700; color:var(--accent); letter-spacing:-1px; }
+.cost-card .label { font-size:12px; color:var(--text2); margin-top:4px; }
 
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  thead tr { border-bottom: 1px solid var(--border); }
-  thead th {
-    text-align: left; padding: 9px 14px;
-    font-size: 10px; font-family: 'Space Mono', monospace;
-    letter-spacing: 0.1em; color: var(--muted);
-    text-transform: uppercase; font-weight: 400;
-  }
-  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: var(--surface2); }
-  td { padding: 10px 14px; vertical-align: middle; }
+.designer-costs {
+  background:var(--bg2); border:1px solid var(--border); border-radius:var(--card-radius); overflow:hidden;
+}
+.designer-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 20px; border-bottom:1px solid var(--border);
+}
+.designer-row:last-child { border-bottom:none; }
+.designer-name { font-weight:500; font-size:14px; }
+.designer-stats { font-size:12px; color:var(--text2); margin-top:2px; }
+.designer-amount { font-size:18px; font-weight:700; color:var(--accent); }
 
-  /* STATUS BADGES */
-  .badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 3px 8px; border-radius: 4px;
-    font-size: 11px; font-weight: 500;
-    font-family: 'Space Mono', monospace;
-  }
-  .badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
-  .badge-pending   { background: #1e1e1e; color: #aaa; border: 1px solid #333; }
-  .badge-inprogress{ background: #1a2a1a; color: var(--success); border: 1px solid #2a442a; }
-  .badge-review    { background: #2a1a00; color: var(--warning); border: 1px solid #442a00; }
-  .badge-revision  { background: #1a1a2a; color: #7ab4ff; border: 1px solid #2a2a44; }
-  .badge-done      { background: #0a1a0a; color: #4aff8a; border: 1px solid #1a3a1a; }
-  .badge-overdue   { background: #2a0a0a; color: var(--danger); border: 1px solid #440a0a; }
+/* ── Quote panel ── */
+.quote-section { margin-bottom:24px; }
+.section-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:12px;
+}
+.section-title { font-size:15px; font-weight:600; }
+.section-sub { font-size:12px; color:var(--text2); margin-top:2px; }
+.quote-table-wrap {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:var(--card-radius); overflow:hidden;
+}
+.quote-table-wrap table th { font-size:11px; }
+.editable-cell {
+  background:transparent; border:none; color:var(--text); font-size:13px;
+  width:100%; padding:0; font-family:var(--font); outline:none; text-align:center;
+  cursor:pointer;
+}
+.editable-cell:focus {
+  background:var(--bg4); border-radius:4px; padding:2px 6px;
+  box-shadow:0 0 0 2px var(--accent);
+}
+.editable-cell::placeholder { color:var(--text3); }
+.add-col-btn, .add-row-btn {
+  background:none; border:none; color:var(--text3); cursor:pointer;
+  font-size:18px; padding:4px 8px; transition:color .2s;
+}
+.add-col-btn:hover, .add-row-btn:hover { color:var(--accent); }
+.del-row-btn {
+  background:none; border:none; color:var(--text3); cursor:pointer;
+  font-size:14px; padding:2px 6px; transition:color .2s; opacity:0;
+}
+tbody tr:hover .del-row-btn { opacity:1; }
+.del-row-btn:hover { color:var(--red); }
 
-  .priority { display: inline-flex; align-items: center; font-size: 11px; font-family: 'Space Mono', monospace; gap: 4px; }
-  .priority-high { color: var(--danger); }
-  .priority-mid  { color: var(--warning); }
-  .priority-low  { color: var(--muted); }
+.spec-section { margin-bottom:24px; }
+.spec-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; }
+.spec-card {
+  background:var(--bg2); border:1px solid var(--border); border-radius:var(--card-radius);
+  overflow:hidden;
+}
+.spec-card-header {
+  background:var(--bg3); padding:12px 16px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--border);
+}
+.spec-card-title { font-size:13px; font-weight:600; }
+.spec-card table { width:100%; }
+.spec-card td { padding:9px 14px; font-size:12px; border-bottom:1px solid var(--border); }
+.spec-card tr:last-child td { border-bottom:none; }
+.spec-card td:first-child { color:var(--text2); width:40px; text-align:center; font-weight:600; }
+.spec-card td:nth-child(2) { color:var(--text3); font-size:11px; }
+.spec-tag {
+  display:inline-block; padding:2px 7px; border-radius:4px; font-size:10px; font-weight:600;
+  background:var(--accent); color:#fff; margin-left:6px; opacity:.7;
+}
 
-  .designer-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }
-  .chip-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+/* ── Settings ── */
+.settings-card {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:var(--card-radius); padding:24px; margin-bottom:16px;
+}
+.settings-title { font-size:14px; font-weight:600; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border); }
 
-  .deadline { font-family: 'Space Mono', monospace; font-size: 11px; }
-  .deadline.overdue  { color: var(--danger); }
-  .deadline.due-soon { color: var(--warning); }
-  .deadline.ok       { color: var(--muted); }
+/* ── Overdue row ── */
+tr.overdue td { background:#ef444408; }
+tr.overdue .task-name { color:#ef4444; }
 
-  /* REVISION COUNTER */
-  .rev-counter {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-family: 'Space Mono', monospace; font-size: 11px;
-  }
-  .rev-dot { width: 6px; height: 6px; border-radius: 50%; background: #7ab4ff; }
+/* ── Mobile ── */
+@media(max-width:768px){
+  .stats-bar { grid-template-columns:repeat(2,1fr); padding:12px; gap:8px; }
+  .content { padding:12px 12px 100px; }
+  header { padding:0 12px; }
+  .drawer { width:100%; }
+  .tabs-wrap { padding:12px 12px 0; }
+  .cost-summary { grid-template-columns:repeat(2,1fr); }
+  .form-row { grid-template-columns:1fr; }
+  table { font-size:12px; }
+  th, td { padding:8px 10px; }
+  .stat-value { font-size:20px; }
+}
 
-  /* BUTTONS */
-  .btn {
-    padding: 7px 14px; border-radius: 6px; border: none;
-    font-family: 'Noto Sans TC', sans-serif; font-size: 13px;
-    cursor: pointer; transition: all 0.15s; font-weight: 500;
-  }
-  .btn-primary { background: var(--accent); color: #000; }
-  .btn-primary:hover { background: #d4eb00; }
-  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
-  .btn-secondary:hover { border-color: #444; }
-  .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 4px 9px; font-size: 11px; }
-  .btn-danger:hover { background: var(--danger); color: #fff; }
-  .btn-sm { padding: 4px 9px; font-size: 11px; border-radius: 4px; }
-  .btn-rev { background: #1a1a2a; color: #7ab4ff; border: 1px solid #2a2a44; padding: 3px 7px; font-size: 12px; border-radius: 4px; cursor: pointer; line-height:1; }
-  .btn-rev:hover { background: #2a2a44; }
-  .btn-rev-minus { color: #ff9a7a; border-color: #44221a; background: #2a1a1a; }
-  .btn-rev-minus:hover { background: #3a2a2a; }
+/* ── Bottom nav (mobile) ── */
+.bottom-nav {
+  display:none; position:fixed; bottom:0; left:0; right:0;
+  background:var(--bg2); border-top:1px solid var(--border);
+  padding:8px 0 env(safe-area-inset-bottom,8px); z-index:100;
+}
+.bottom-nav-inner { display:flex; justify-content:space-around; }
+.nav-item { display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:4px 16px; color:var(--text3); font-size:10px; border:none; background:none; }
+.nav-item.active { color:var(--accent); }
+.nav-item .nav-icon { font-size:20px; }
+@media(max-width:768px){ .bottom-nav { display:block; } .tabs-wrap { display:none; } }
 
-  /* INLINE STATUS SELECT */
-  .inline-status-select {
-    background: #1e1e1e; border: 1px solid #333;
-    border-radius: 4px; color: var(--text);
-    font-family: 'Space Mono', monospace; font-size: 11px;
-    padding: 3px 6px; cursor: pointer; outline: none;
-    transition: border-color 0.15s;
-  }
-  .inline-status-select:hover { border-color: #555; }
-  .inline-status-select:focus { border-color: var(--accent); }
-
-  /* MODAL */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.75); z-index: 200;
-    align-items: center; justify-content: center;
-    backdrop-filter: blur(4px);
-  }
-  .modal-overlay.show { display: flex; }
-  .modal {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 12px; padding: 26px;
-    width: 520px; max-width: 95vw; max-height: 90vh; overflow-y: auto;
-  }
-  .modal h2 { font-size: 16px; font-weight: 700; margin-bottom: 18px; }
-
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; margin-bottom: 13px; }
-  .form-full { grid-column: 1 / -1; }
-  .form-group { display: flex; flex-direction: column; gap: 5px; }
-  .form-group label { font-size: 10px; color: var(--muted); font-family: 'Space Mono', monospace; letter-spacing: 0.08em; }
-  .form-group input, .form-group select, .form-group textarea {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 6px; color: var(--text);
-    font-family: 'Noto Sans TC', sans-serif; font-size: 13px;
-    padding: 8px 11px; outline: none; transition: border-color 0.15s;
-  }
-  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
-  .form-group select option { background: #1e1e1e; }
-  .form-group textarea { resize: vertical; min-height: 68px; }
-
-  .modal-footer {
-    display: flex; justify-content: flex-end; gap: 10px;
-    margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border);
-  }
-
-  /* PROGRESS BAR */
-  .progress-bar-outer { height: 4px; background: var(--border); border-radius: 2px; width: 90px; overflow: hidden; }
-  .progress-bar-inner { height: 100%; border-radius: 2px; background: var(--accent2); transition: width 0.3s; }
-
-  /* SEARCH */
-  .search-input {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 6px; color: var(--text);
-    font-family: 'Noto Sans TC', sans-serif; font-size: 13px;
-    padding: 7px 11px; outline: none; width: 180px; transition: border-color 0.15s, width 0.2s;
-  }
-  .search-input:focus { border-color: var(--accent); width: 230px; }
-  .search-input::placeholder { color: var(--muted); }
-
-  /* EMPTY STATE */
-  .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 13px; }
-  .empty-state .icon { font-size: 28px; margin-bottom: 10px; }
-
-  /* TOAST */
-  #toast {
-    position: fixed; bottom: 22px; right: 22px;
-    background: var(--accent); color: #000;
-    padding: 9px 16px; border-radius: 6px; font-size: 13px; font-weight: 600;
-    transform: translateY(60px); opacity: 0; transition: all 0.25s; z-index: 999;
-  }
-  #toast.show { transform: translateY(0); opacity: 1; }
-
-  /* ── COST TAB ── */
-  .cost-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px; }
-  .cost-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 16px;
-  }
-  .cost-card-header {
-    display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
-    padding-bottom: 12px; border-bottom: 1px solid var(--border);
-  }
-  .cost-avatar {
-    width: 36px; height: 36px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700;
-  }
-  .cost-name { font-size: 14px; font-weight: 600; }
-  .cost-role { font-size: 11px; color: var(--muted); }
-  .cost-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 12px; border-bottom: 1px solid #1e1e1e; }
-  .cost-row:last-child { border-bottom: none; }
-  .cost-row-label { color: var(--muted); }
-  .cost-row-value { font-family: 'Space Mono', monospace; font-weight: 600; }
-  .cost-total {
-    margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border);
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .cost-total-label { font-size: 11px; color: var(--muted); font-family: 'Space Mono', monospace; }
-  .cost-total-value { font-size: 18px; font-weight: 700; font-family: 'Space Mono', monospace; color: var(--accent); }
-
-  .cost-summary-bar {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 18px 22px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .cost-summary-label { font-size: 12px; color: var(--muted); font-family: 'Space Mono', monospace; }
-  .cost-summary-value { font-size: 28px; font-weight: 700; font-family: 'Space Mono', monospace; color: var(--accent); }
-
-  /* RATE TABLE */
-  .rate-table-wrapper { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 20px; }
-  .rate-table-title { padding: 13px 18px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 600; }
-
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-
-  /* TAB CONTENT */
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-
-  /* SYNC */
-  .sync-bar {
-    display: flex; align-items: center; gap: 10px;
-    padding: 8px 28px;
-    background: #0d1a0d;
-    border-bottom: 1px solid #1a2a1a;
-    font-size: 11px; font-family: 'Space Mono', monospace;
-  }
-  .sync-status { color: var(--muted); flex: 1; }
-  .sync-status.ok    { color: var(--success); }
-  .sync-status.err   { color: var(--danger); }
-  .sync-status.loading { color: var(--warning); }
-  .btn-sync {
-    background: #1a2a1a; color: var(--success);
-    border: 1px solid #2a442a; padding: 4px 12px;
-    border-radius: 4px; font-size: 11px;
-    font-family: 'Space Mono', monospace;
-    cursor: pointer; transition: all 0.15s;
-  }
-  .btn-sync:hover { background: #2a442a; }
-  .btn-sync:disabled { opacity: 0.4; cursor: not-allowed; }
-  .sync-spinner { display: inline-block; animation: spin 0.8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* COLUMN MAP MODAL */
-  .colmap-modal {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 12px; padding: 24px;
-    width: 580px; max-width: 95vw; max-height: 85vh; overflow-y: auto;
-  }
-  .colmap-row {
-    display: grid; grid-template-columns: 160px 1fr;
-    gap: 10px; align-items: center; margin-bottom: 10px;
-  }
-  .colmap-label { font-size: 12px; color: var(--muted); font-family: 'Space Mono', monospace; }
-  .colmap-select {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 6px; color: var(--text); padding: 6px 10px;
-    font-family: 'Noto Sans TC', sans-serif; font-size: 13px; outline: none;
-  }
-  .colmap-select:focus { border-color: var(--accent); }
+/* ── Notifications ── */
+.toast {
+  position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:var(--bg4); border:1px solid var(--border); border-radius:10px;
+  padding:10px 20px; font-size:13px; z-index:500;
+  opacity:0; transition:all .3s; pointer-events:none; white-space:nowrap;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
+<!-- Header -->
 <header>
-  <div class="logo">DISPATCH // 杰拓設計發包管理</div>
-  <div class="header-stats">
-    <div class="stat-pill">任務總數 <span id="hdr-total">0</span></div>
-    <div class="stat-pill">進行中 <span id="hdr-inprogress">0</span></div>
-    <div class="stat-pill">逾期警示 <span id="hdr-overdue" style="color:var(--danger)">0</span></div>
-    <div class="stat-pill">本月費用 <span id="hdr-cost" style="color:var(--accent)">$0</span></div>
+  <div class="logo">
+    <span class="logo-badge">DISPATCH</span>
+    <span class="logo-text">杰拓設計發包管理</span>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-ghost btn-sm" onclick="importCSV()">📂 匯入 CSV</button>
+    <button class="btn btn-ghost btn-sm" onclick="openSettings()">⚙ Sheets 設定</button>
+    <button class="btn btn-primary btn-sm" onclick="openDrawer()">＋ 新增任務</button>
   </div>
 </header>
 
-<!-- TABS -->
-<div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('tasks',this)">📋 任務看板</button>
-  <button class="tab-btn" onclick="switchTab('cost',this)">💰 費用總覽</button>
-  <button class="tab-btn" onclick="switchTab('rates',this)">📊 報價規格</button>
-</div>
-
-<!-- SYNC BAR -->
-<div class="sync-bar">
-  <span class="sync-status" id="sync-status">尚未同步 — 點「從 Sheets 匯入」拉取最新發包記錄</span>
-  <button class="btn-sync" id="sync-btn" onclick="startSync()">⬇ 從 Sheets 匯入</button>
-  <button class="btn-sync" style="background:#1a2a1a;color:#4affb4;border-color:#2a442a" onclick="document.getElementById('csv-input').click()">📂 匯入 CSV</button>
-  <input type="file" id="csv-input" accept=".csv" style="display:none" onchange="importCSV(this)">
-  <button class="btn-sync" style="background:#1a1a2a;color:#7ab4ff;border-color:#2a2a44" onclick="openColMapModal()">⚙ 欄位設定</button>
-</div>
-
-<!-- ════════════════ TAB: TASKS ════════════════ -->
-<div id="tab-tasks" class="tab-content active">
-<div class="layout">
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-section">
-      <div class="sidebar-label">設計師</div>
-      <div id="designer-list"></div>
-    </div>
-    <div class="sidebar-section">
-      <div class="sidebar-label">篩選狀態</div>
-      <button class="filter-btn active" data-filter="all" onclick="setFilter('all',this)">
-        <span class="filter-dot" style="background:#555"></span>全部任務
-        <span class="filter-btn-count" id="fc-all">0</span>
-      </button>
-      <button class="filter-btn" data-filter="pending" onclick="setFilter('pending',this)">
-        <span class="filter-dot" style="background:#aaa"></span>待開始
-        <span class="filter-btn-count" id="fc-pending">0</span>
-      </button>
-      <button class="filter-btn" data-filter="inprogress" onclick="setFilter('inprogress',this)">
-        <span class="filter-dot" style="background:var(--success)"></span>進行中
-        <span class="filter-btn-count" id="fc-inprogress">0</span>
-      </button>
-      <button class="filter-btn" data-filter="review" onclick="setFilter('review',this)">
-        <span class="filter-dot" style="background:var(--warning)"></span>待審核
-        <span class="filter-btn-count" id="fc-review">0</span>
-      </button>
-      <button class="filter-btn" data-filter="revision" onclick="setFilter('revision',this)">
-        <span class="filter-dot" style="background:#7ab4ff"></span>修改中
-        <span class="filter-btn-count" id="fc-revision">0</span>
-      </button>
-      <button class="filter-btn" data-filter="done" onclick="setFilter('done',this)">
-        <span class="filter-dot" style="background:#4aff8a"></span>已完成
-        <span class="filter-btn-count" id="fc-done">0</span>
-      </button>
-      <button class="filter-btn" data-filter="overdue" onclick="setFilter('overdue',this)">
-        <span class="filter-dot" style="background:var(--danger)"></span>逾期
-        <span class="filter-btn-count" id="fc-overdue">0</span>
-      </button>
-    </div>
-    <div class="sidebar-section">
-      <div class="sidebar-label">近期交期</div>
-      <div id="upcoming-list" style="font-size:11px;color:var(--muted);line-height:1.8;"></div>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="main">
-    <div class="summary-row">
-      <div class="summary-card">
-        <div class="summary-card-label">總任務數</div>
-        <div class="summary-card-value" id="s-total" style="color:var(--text)">0</div>
-        <div class="summary-card-sub">所有發包項目</div>
-      </div>
-      <div class="summary-card">
-        <div class="summary-card-label">總件數</div>
-        <div class="summary-card-value" id="s-qty" style="color:var(--accent)">0</div>
-        <div class="summary-card-sub">件</div>
-      </div>
-      <div class="summary-card">
-        <div class="summary-card-label">本週到期</div>
-        <div class="summary-card-value" id="s-week" style="color:var(--warning)">0</div>
-        <div class="summary-card-sub">任務項目</div>
-      </div>
-      <div class="summary-card">
-        <div class="summary-card-label">完成率</div>
-        <div class="summary-card-value" id="s-rate" style="color:var(--success)">0%</div>
-        <div class="summary-card-sub">已完成 / 全部</div>
-      </div>
-    </div>
-
-    <div class="table-wrapper">
-      <div class="table-header-row">
-        <h2 id="table-title">全部任務</h2>
-        <div style="display:flex;gap:10px;align-items:center">
-          <input class="search-input" placeholder="搜尋任務..." id="search-input" oninput="renderTable()">
-          <button class="btn btn-primary" onclick="openModal()">＋ 新增任務</button>
-        </div>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>任務名稱</th>
-            <th>設計師</th>
-            <th>品項類型</th>
-            <th>數量</th>
-            <th>優先度</th>
-            <th>狀態</th>
-            <th>修改次數</th>
-            <th>交期</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody id="task-tbody"></tbody>
-      </table>
-      <div id="empty-state" class="empty-state" style="display:none">
-        <div class="icon">📭</div>
-        <div>目前沒有符合條件的任務</div>
-      </div>
-    </div>
-  </main>
-</div>
-</div>
-
-<!-- ════════════════ TAB: COST ════════════════ -->
-<div id="tab-cost" class="tab-content">
-<div class="main" style="max-width:1100px">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
-    <h2 style="font-size:16px;font-weight:700">本月費用總覽</h2>
-    <span style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace" id="cost-month"></span>
-  </div>
-
-  <div class="cost-summary-bar" style="margin-bottom:22px">
+<!-- Stats -->
+<div class="stats-bar">
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#4f7cff15;color:var(--accent)">📋</div>
     <div>
-      <div class="cost-summary-label">本月設計費合計</div>
-      <div class="cost-summary-value" id="cost-grand-total">$0</div>
-    </div>
-    <div style="text-align:right">
-      <div class="cost-summary-label">已完成任務</div>
-      <div style="font-size:22px;font-weight:700;font-family:'Space Mono',monospace;color:var(--success)" id="cost-done-count">0 件</div>
+      <div class="stat-label">任務總數</div>
+      <div class="stat-value" id="statTotal">0</div>
+      <div class="stat-sub">所有發包項目</div>
     </div>
   </div>
-
-  <div class="cost-grid" id="cost-cards"></div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#22c55e15;color:var(--green)">⚡</div>
+    <div>
+      <div class="stat-label">進行中</div>
+      <div class="stat-value" id="statProgress">0</div>
+      <div class="stat-sub">執行中任務</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#ef444415;color:var(--red)">⚠️</div>
+    <div>
+      <div class="stat-label">逾期警示</div>
+      <div class="stat-value" id="statOverdue">0</div>
+      <div class="stat-sub">需要立即處理</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#f59e0b15;color:var(--yellow)">💰</div>
+    <div>
+      <div class="stat-label">本月費用</div>
+      <div class="stat-value" id="statCost">$0</div>
+      <div class="stat-sub">設計費合計</div>
+    </div>
+  </div>
 </div>
+
+<!-- Tabs -->
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('kanban',this)">📋 任務看板</button>
+    <button class="tab" onclick="switchTab('cost',this)">💰 費用總覽</button>
+    <button class="tab" onclick="switchTab('quote',this)">📊 報價規格</button>
+  </div>
 </div>
 
-<!-- ════════════════ TAB: RATES ════════════════ -->
-<div id="tab-rates" class="tab-content">
-<div class="main" style="max-width:900px">
-  <h2 style="font-size:16px;font-weight:700;margin-bottom:18px">各設計師報價規格</h2>
-  <div class="rate-table-wrapper">
-    <div class="rate-table-title">報價彙整（截至 2026/05）</div>
-    <table>
+<!-- ══ KANBAN PANEL ══ -->
+<div class="content">
+<div class="panel active" id="panel-kanban">
+  <div class="toolbar">
+    <div class="filter-group" id="statusFilters">
+      <button class="filter-chip active" data-status="all" onclick="filterStatus('all',this)">全部 <span id="fc-all">0</span></button>
+      <button class="filter-chip" data-status="待開始" onclick="filterStatus('待開始',this)">待開始 <span id="fc-待開始">0</span></button>
+      <button class="filter-chip" data-status="進行中" onclick="filterStatus('進行中',this)">進行中 <span id="fc-進行中">0</span></button>
+      <button class="filter-chip" data-status="待審核" onclick="filterStatus('待審核',this)">待審核 <span id="fc-待審核">0</span></button>
+      <button class="filter-chip" data-status="修改中" onclick="filterStatus('修改中',this)">修改中 <span id="fc-修改中">0</span></button>
+      <button class="filter-chip" data-status="已完成" onclick="filterStatus('已完成',this)">已完成 <span id="fc-已完成">0</span></button>
+      <button class="filter-chip" data-status="逾期" onclick="filterStatus('逾期',this)">逾期 <span id="fc-逾期">0</span></button>
+    </div>
+    <select class="filter-select" id="designerFilter" onchange="renderTable()">
+      <option value="">所有設計師</option>
+      <option>Amber</option><option>Emma</option><option>大P</option><option>楊雅淳</option><option>Vivian</option>
+    </select>
+    <div class="toolbar-right">
+      <button class="btn btn-ghost btn-sm" onclick="syncSheets()">⬇ 從 Sheets 匯入</button>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table id="taskTable">
       <thead>
         <tr>
-          <th>設計師</th>
-          <th>上架包 ×1</th>
-          <th>上架包 ×5</th>
-          <th>官網Banner (1視覺×4尺寸)</th>
-          <th>網購Banner (1視覺×13尺寸)</th>
+          <th>任務名稱</th><th>設計師</th><th>品項類型</th>
+          <th>數量</th><th>優先度</th><th>狀態</th>
+          <th>修改次數</th><th>交期</th><th>操作</th>
         </tr>
       </thead>
-      <tbody>
-        <tr><td><span class="designer-chip"><span class="chip-dot" style="background:#e8ff4a"></span>Amber</span></td><td>$2,000</td><td>$1,800</td><td>$1,200</td><td>—</td></tr>
-        <tr><td><span class="designer-chip"><span class="chip-dot" style="background:#4affb4"></span>Emma</span></td><td>$2,000</td><td>待報價</td><td>—</td><td>—</td></tr>
-        <tr><td><span class="designer-chip"><span class="chip-dot" style="background:#ff6b4a"></span>大P</span></td><td>$2,000</td><td>待報價</td><td>$2,000</td><td>待報價</td></tr>
-        <tr><td><span class="designer-chip"><span class="chip-dot" style="background:#b47aff"></span>楊雅淳</span></td><td>—</td><td>—</td><td>$2,000</td><td>待報價</td></tr>
-        <tr><td><span class="designer-chip"><span class="chip-dot" style="background:#ff7ab4"></span>Vivian</span></td><td>—</td><td>—</td><td>$2,000</td><td>—</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="rate-table-wrapper" style="margin-top:20px">
-    <div class="rate-table-title">官網 Banner 尺寸規格</div>
-    <table>
-      <thead><tr><th>NO</th><th>平台</th><th>尺寸</th></tr></thead>
-      <tbody>
-        <tr><td>1</td><td>PChome</td><td>1200×400</td></tr>
-        <tr><td>2</td><td></td><td>1080×1920</td></tr>
-        <tr><td>3</td><td></td><td>1200×628 (要LOGO)</td></tr>
-        <tr><td>4</td><td></td><td>1040×1040</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="rate-table-wrapper" style="margin-top:20px">
-    <div class="rate-table-title">網購 Banner 尺寸規格（13尺寸）</div>
-    <table>
-      <thead><tr><th>NO</th><th>平台</th><th>尺寸 / 限制</th></tr></thead>
-      <tbody>
-        <tr><td>1</td><td>PChome</td><td>1080×1920 &lt;20MB</td></tr>
-        <tr><td>2</td><td></td><td>1644×604 &lt;395KB</td></tr>
-        <tr><td>3</td><td></td><td>462×462 &lt;225KB</td></tr>
-        <tr><td>4</td><td>Yahoo</td><td>1200×600 &lt;300K</td></tr>
-        <tr><td>5</td><td></td><td>950×464 &lt;200K</td></tr>
-        <tr><td>6</td><td></td><td>960×450 &lt;200K</td></tr>
-        <tr><td>7</td><td></td><td>1080×345 &lt;200K</td></tr>
-        <tr><td>8</td><td>博客來</td><td>240×240</td></tr>
-        <tr><td>9</td><td></td><td>950×250</td></tr>
-        <tr><td>10</td><td></td><td>621×312</td></tr>
-        <tr><td>11</td><td>MOMO</td><td>818×370 &lt;150K</td></tr>
-        <tr><td>12</td><td></td><td>1000×300 &lt;150K</td></tr>
-        <tr><td>13</td><td></td><td>852×426 &lt;150K</td></tr>
-      </tbody>
+      <tbody id="taskBody"></tbody>
     </table>
   </div>
 </div>
+
+<!-- ══ COST PANEL ══ -->
+<div class="panel" id="panel-cost">
+  <div class="cost-summary">
+    <div class="cost-card">
+      <div class="amount" id="costTotal">$0</div>
+      <div class="label">本月設計費合計</div>
+    </div>
+    <div class="cost-card">
+      <div class="amount" id="costDone" style="color:var(--green)">0 件</div>
+      <div class="label">已完成任務</div>
+    </div>
+    <div class="cost-card">
+      <div class="amount" id="costRate" style="color:var(--yellow)">0%</div>
+      <div class="label">完成率</div>
+    </div>
+  </div>
+  <div class="section-header"><div><div class="section-title">各設計師費用明細</div></div></div>
+  <div class="designer-costs" id="designerCosts"></div>
 </div>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modal-overlay">
-  <div class="modal">
-    <h2 id="modal-title">新增發包任務</h2>
-    <div class="form-grid">
-      <div class="form-group form-full">
-        <label>任務名稱</label>
-        <input type="text" id="f-name" placeholder="e.g. Spigen S26 系列主圖">
+<!-- ══ QUOTE PANEL ══ -->
+<div class="panel" id="panel-quote">
+  <!-- 報價彙整 -->
+  <div class="quote-section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">各設計師報價彙整</div>
+        <div class="section-sub">點擊任意格子即可編輯，新增欄位 / 設計師皆可動態調整</div>
       </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm" onclick="addQuoteRow()">＋ 新增設計師</button>
+        <button class="btn btn-ghost btn-sm" onclick="addQuoteCol()">＋ 新增品項</button>
+        <button class="btn btn-success btn-sm" onclick="saveQuote()">✓ 儲存</button>
+      </div>
+    </div>
+    <div class="quote-table-wrap">
+      <table id="quoteTable">
+        <thead id="quoteHead"></thead>
+        <tbody id="quoteBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 官網 Banner 規格 -->
+  <div class="spec-section">
+    <div class="section-header">
+      <div class="section-title">官網 Banner 尺寸規格</div>
+      <button class="btn btn-ghost btn-sm" onclick="addSpecRow('official')">＋ 新增</button>
+    </div>
+    <div class="spec-grid" id="officialSpecGrid"></div>
+  </div>
+
+  <!-- 網購 Banner 規格 -->
+  <div class="spec-section">
+    <div class="section-header">
+      <div class="section-title">網購 Banner 尺寸規格（13尺寸）</div>
+      <button class="btn btn-ghost btn-sm" onclick="addSpecRow('shop')">＋ 新增</button>
+    </div>
+    <div class="spec-grid" id="shopSpecGrid"></div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<!-- ══ DRAWER ══ -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <div class="drawer-title" id="drawerTitle">新增發包任務</div>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body">
+    <div class="form-group">
+      <label class="form-label">任務名稱 *</label>
+      <input type="text" id="f-name" placeholder="例：S26 Ultra 螢幕保護貼 上架包">
+    </div>
+    <div class="form-row">
       <div class="form-group">
-        <label>指派設計師</label>
+        <label class="form-label">指派設計師 *</label>
         <select id="f-designer">
           <option value="">選擇設計師</option>
+          <option>Amber</option><option>Emma</option><option>大P</option><option>楊雅淳</option><option>Vivian</option>
         </select>
       </div>
       <div class="form-group">
-        <label>品項類型</label>
+        <label class="form-label">品項類型</label>
         <select id="f-type">
-          <option value="上架包">上架包</option>
-          <option value="官網Banner">官網Banner</option>
-          <option value="網購Banner">網購Banner</option>
-          <option value="社群貼文">社群貼文</option>
-          <option value="包裝設計">包裝設計</option>
-          <option value="說明圖">說明圖</option>
-          <option value="Logo">Logo</option>
-          <option value="電商頁面">電商頁面</option>
-          <option value="影片素材">影片素材</option>
-          <option value="其他">其他</option>
+          <option>上架包</option><option>官網Banner</option><option>網購Banner</option>
+          <option>社群貼文</option><option>包裝設計</option><option>說明圖</option>
+          <option>Logo</option><option>電商頁面</option><option>影片素材</option><option>其他</option>
         </select>
       </div>
+    </div>
+    <div class="form-row">
       <div class="form-group">
-        <label>數量（件）</label>
-        <input type="number" id="f-qty" min="1" value="1">
+        <label class="form-label">數量（件）</label>
+        <input type="number" id="f-qty" value="1" min="1">
       </div>
       <div class="form-group">
-        <label>單價（元）</label>
-        <input type="number" id="f-unitprice" min="0" value="2000" placeholder="自動帶入，可修改">
+        <label class="form-label">單價（元）</label>
+        <input type="number" id="f-price" placeholder="2000">
       </div>
+    </div>
+    <div class="form-row">
       <div class="form-group">
-        <label>優先度</label>
+        <label class="form-label">優先度</label>
         <select id="f-priority">
-          <option value="high">🔴 高</option>
-          <option value="mid" selected>🟡 中</option>
-          <option value="low">⚪ 低</option>
+          <option value="高">🔴 高</option>
+          <option value="中" selected>🟡 中</option>
+          <option value="低">⚪ 低</option>
         </select>
       </div>
       <div class="form-group">
-        <label>狀態</label>
+        <label class="form-label">狀態</label>
         <select id="f-status">
-          <option value="pending">待開始</option>
-          <option value="inprogress">進行中</option>
-          <option value="review">待審核</option>
-          <option value="revision">修改中</option>
-          <option value="done">已完成</option>
+          <option>待開始</option><option>進行中</option><option>待審核</option>
+          <option>修改中</option><option>已完成</option>
         </select>
       </div>
-      <div class="form-group">
-        <label>進度 (%)</label>
-        <input type="number" id="f-progress" min="0" max="100" value="0">
-      </div>
-      <div class="form-group">
-        <label>交期</label>
-        <input type="date" id="f-deadline">
-      </div>
-      <div class="form-group form-full">
-        <label>備註</label>
-        <textarea id="f-note" placeholder="尺寸規格、參考資料、特別要求..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">進度（%）</label>
+      <div class="range-wrap">
+        <input type="range" id="f-progress" min="0" max="100" value="0" oninput="document.getElementById('f-prog-val').textContent=this.value+'%'">
+        <span class="range-val" id="f-prog-val">0%</span>
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
-      <button class="btn btn-primary" onclick="saveTask()">儲存任務</button>
+    <div class="form-group">
+      <label class="form-label">交期</label>
+      <input type="date" id="f-deadline">
     </div>
+    <div class="form-group">
+      <label class="form-label">備註</label>
+      <textarea id="f-note" placeholder="補充說明、參考連結等…"></textarea>
+    </div>
+  </div>
+  <div class="drawer-footer">
+    <button class="btn btn-ghost" style="flex:1" onclick="closeDrawer()">取消</button>
+    <button class="btn btn-primary" style="flex:2" onclick="saveTask()">儲存任務</button>
   </div>
 </div>
 
-<div id="toast"></div>
-
-<!-- COLUMN MAP MODAL -->
-<div class="modal-overlay" id="colmap-overlay">
-  <div class="colmap-modal">
-    <h2 style="font-size:16px;font-weight:700;margin-bottom:6px">⚙ Google Sheets 欄位對應設定</h2>
-    <p style="font-size:11px;color:var(--muted);margin-bottom:18px;font-family:'Space Mono',monospace">設定你試算表的欄位名稱對應，系統才能正確讀取資料</p>
-
-    <div style="margin-bottom:14px">
-      <div class="colmap-row">
-        <span class="colmap-label">試算表 ID</span>
-        <input id="cfg-sheet-id" class="colmap-select" placeholder="貼上試算表ID（網址中間那段）" style="font-size:11px">
+<!-- Settings drawer -->
+<div class="drawer-overlay" id="settingsOverlay" onclick="closeSettings()"></div>
+<div class="drawer" id="settingsDrawer">
+  <div class="drawer-header">
+    <div class="drawer-title">⚙ Google Sheets 欄位設定</div>
+    <button class="drawer-close" onclick="closeSettings()">✕</button>
+  </div>
+  <div class="drawer-body">
+    <div class="settings-card">
+      <div class="settings-title">試算表連結</div>
+      <div class="form-group"><label class="form-label">試算表 ID</label><input type="text" id="s-sheetId" placeholder="1BxiMVs0XRA..."></div>
+      <div class="form-group"><label class="form-label">工作表 GID</label><input type="text" id="s-gid" placeholder="0"></div>
+    </div>
+    <div class="settings-card">
+      <div class="settings-title">欄位對應</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">任務名稱</label><input type="text" id="s-col-name" placeholder="任務名稱"></div>
+        <div class="form-group"><label class="form-label">設計師</label><input type="text" id="s-col-designer" placeholder="設計師"></div>
       </div>
-      <div class="colmap-row">
-        <span class="colmap-label">工作表 GID</span>
-        <input id="cfg-gid" class="colmap-select" placeholder="預設 0（第一個工作表）" style="font-size:11px">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">類型</label><input type="text" id="s-col-type" placeholder="類型"></div>
+        <div class="form-group"><label class="form-label">數量</label><input type="text" id="s-col-qty" placeholder="數量"></div>
       </div>
-    </div>
-
-    <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px">
-      <p style="font-size:11px;color:var(--muted);margin-bottom:10px;font-family:'Space Mono',monospace">↓ 把你試算表的欄位名稱貼入（可留空表示沒有這欄）</p>
-      <div class="colmap-row"><span class="colmap-label">任務名稱</span><input id="col-name" class="colmap-select" placeholder="例：稿件名稱 / 任務"></div>
-      <div class="colmap-row"><span class="colmap-label">設計師</span><input id="col-designer" class="colmap-select" placeholder="例：設計師 / Designer"></div>
-      <div class="colmap-row"><span class="colmap-label">類型</span><input id="col-type" class="colmap-select" placeholder="例：類型 / 品項"></div>
-      <div class="colmap-row"><span class="colmap-label">數量</span><input id="col-qty" class="colmap-select" placeholder="例：數量 / 件數"></div>
-      <div class="colmap-row"><span class="colmap-label">單價</span><input id="col-unitprice" class="colmap-select" placeholder="例：單價 / 報價"></div>
-      <div class="colmap-row"><span class="colmap-label">優先度</span><input id="col-priority" class="colmap-select" placeholder="例：優先度（可留空）"></div>
-      <div class="colmap-row"><span class="colmap-label">狀態</span><input id="col-status" class="colmap-select" placeholder="例：狀態 / 進度"></div>
-      <div class="colmap-row"><span class="colmap-label">交期</span><input id="col-deadline" class="colmap-select" placeholder="例：交期 / 截止日"></div>
-      <div class="colmap-row"><span class="colmap-label">備註</span><input id="col-note" class="colmap-select" placeholder="例：備註 / Note"></div>
-    </div>
-
-    <div style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:16px;background:#1a1a1a;border-radius:6px;padding:10px">
-      💡 設計師欄位的值需對應到系統名稱（Amber, Emma, 大P, 楊雅淳, Vivian）或其縮寫（AMB, EMM, DAP, YAC, VIV）
-    </div>
-
-    <div style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--border);padding-top:14px">
-      <button class="btn btn-secondary" onclick="closeColMapModal()">取消</button>
-      <button class="btn btn-primary" onclick="saveColMap()">儲存設定</button>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">單價</label><input type="text" id="s-col-price" placeholder="單價"></div>
+        <div class="form-group"><label class="form-label">優先度</label><input type="text" id="s-col-pri" placeholder="優先度"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">狀態</label><input type="text" id="s-col-status" placeholder="狀態"></div>
+        <div class="form-group"><label class="form-label">交期</label><input type="text" id="s-col-deadline" placeholder="交期"></div>
+      </div>
+      <div class="form-group"><label class="form-label">備註</label><input type="text" id="s-col-note" placeholder="備註"></div>
     </div>
   </div>
+  <div class="drawer-footer">
+    <button class="btn btn-ghost" style="flex:1" onclick="closeSettings()">取消</button>
+    <button class="btn btn-primary" style="flex:2" onclick="saveSettings()">儲存設定</button>
+  </div>
 </div>
+
+<!-- Bottom nav -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="nav-item active" onclick="switchTab('kanban',null,this)"><span class="nav-icon">📋</span>看板</button>
+    <button class="nav-item" onclick="switchTab('cost',null,this)"><span class="nav-icon">💰</span>費用</button>
+    <button class="nav-item" onclick="switchTab('quote',null,this)"><span class="nav-icon">📊</span>報價</button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
 
 <script>
-// ─── GOOGLE SHEETS SYNC CONFIG ───────────────────────────────────────────────
-const DEFAULT_CONFIG = {
-  sheetId: '1b-8zzwSx8HJH1PW_yreghBViTyfnVemtHVwxM1lfF-8',
-  gid: '0',
-  cols: {
-    name:      '稿件名稱',
-    designer:  '設計師',
-    type:      '類型',
-    qty:       '數量',
-    unitprice: '單價',
-    priority:  '優先度',
-    status:    '狀態',
-    deadline:  '交期',
-    note:      '備註',
-  }
-};
-
-let syncConfig = JSON.parse(localStorage.getItem('jtl_sync_config') || 'null') || DEFAULT_CONFIG;
-
-// Designer name aliases (試算表裡可能寫中文名或英文)
-const DESIGNER_ALIASES = {
-  'amber': 'AMB', 'AMB': 'AMB',
-  'emma':  'EMM', 'EMM': 'EMM',
-  '大p':  'DAP', '大P': 'DAP', 'DAP': 'DAP',
-  '楊雅淳': 'YAC', 'YAC': 'YAC',
-  'vivian': 'VIV', 'VIV': 'VIV',
-};
-
-// Status text → internal key mapping
-const STATUS_ALIASES = {
-  '待開始': 'pending',   '待接單': 'pending',   'pending': 'pending',
-  '進行中': 'inprogress','製稿中': 'inprogress','inprogress': 'inprogress',
-  '待審核': 'review',    'review': 'review',
-  '修改中': 'revision',  'revision': 'revision',
-  '已完成': 'done',      '完稿': 'done',         'done': 'done',
-};
-
-function resolveDesigner(raw) {
-  if (!raw) return '';
-  const key = raw.trim();
-  return DESIGNER_ALIASES[key] || DESIGNER_ALIASES[key.toLowerCase()] || '';
-}
-function resolveStatus(raw) {
-  if (!raw) return 'pending';
-  return STATUS_ALIASES[raw.trim()] || 'pending';
-}
-function resolvePriority(raw) {
-  if (!raw) return 'mid';
-  const s = raw.trim();
-  if (s.includes('高') || s.toLowerCase() === 'high') return 'high';
-  if (s.includes('低') || s.toLowerCase() === 'low')  return 'low';
-  return 'mid';
-}
-
-// Parse CSV (handles quoted fields with commas)
-function parseCSV(text) {
-  const rows = [];
-  const lines = text.split(/\r?\n/);
-  for (const line of lines) {
-    if (!line.trim()) continue;
-    const cols = [];
-    let cur = '', inQ = false;
-    for (let i = 0; i < line.length; i++) {
-      const c = line[i];
-      if (c === '"') { inQ = !inQ; }
-      else if (c === ',' && !inQ) { cols.push(cur); cur = ''; }
-      else { cur += c; }
-    }
-    cols.push(cur);
-    rows.push(cols);
-  }
-  return rows;
-}
-
-// ─── APPS SCRIPT WEB APP URL ─────────────────────────────────────────────────
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOAgt7vzd-EzHjU5mzk1OXiykKtls-VM424Noie0fj9htdYXVUfTnAMe72z97CfkQM7A/exec';
-
-async function startSync() {
-  const btn = document.getElementById('sync-btn');
-  const status = document.getElementById('sync-status');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="sync-spinner">↻</span> 同步中...';
-  status.className = 'sync-status loading';
-  status.textContent = '連線 Google Sheets 中...';
-
-  try {
-    const resp = await fetch(APPS_SCRIPT_URL);
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const json = await resp.json();
-    if (!json.ok) throw new Error('Apps Script 回傳錯誤');
-
-    const rows = json.rows || [];
-    if (rows.length === 0) throw new Error('試算表沒有資料');
-
-    let added = 0, skipped = 0;
-
-    for (const r of rows) {
-      const name = (r['name'] || r['合作內容'] || r['稿件名稱'] || '').trim();
-      if (!name) { skipped++; continue; }
-
-      // Build a stable unique key: designer + name + date (cross-browser safe)
-      const designerRawForKey = (r['designer'] || r['設計師'] || '').trim();
-      const dateRawForKey = (r['date'] || r['發包日期'] || r['deadline'] || r['交期'] || '').trim();
-      const uniqueKey = `${resolveDesigner(designerRawForKey)}|${name}|${dateRawForKey}`;
-
-      // Skip duplicates using uniqueKey
-      if (tasks.some(t => t.uniqueKey === uniqueKey)) { skipped++; continue; }
-
-      const designerRaw = (r['designer'] || r['設計師'] || '').trim();
-      const designerId  = resolveDesigner(designerRaw);
-
-      const typeRaw  = (r['type'] || r['合作類型'] || r['類型'] || '上架包').trim();
-      // Normalize type
-      let typeVal = '上架包';
-      if (typeRaw.includes('官網') || typeRaw.includes('Banner')) typeVal = '官網Banner';
-      else if (typeRaw.includes('網購')) typeVal = '網購Banner';
-      else if (typeRaw.includes('上架')) typeVal = typeRaw.includes('5') || typeRaw.includes('×5') ? '上架包×5' : '上架包';
-      else typeVal = typeRaw || '上架包';
-
-      const qtyRaw   = (r['qty'] || r['數量'] || '1').replace(/[^\d]/g, '');
-      const qtyVal   = parseInt(qtyRaw) || 1;
-
-      const priceRaw = (r['unitprice'] || r['單價'] || '').replace(/[$,，＄]/g, '').trim();
-      let finalPrice = parseInt(priceRaw) || 0;
-      if (!finalPrice && designerId) {
-        const d = DESIGNERS.find(x => x.id === designerId);
-        finalPrice = d ? (d.rates[typeVal] || d.rates['上架包'] || 2000) : 2000;
-      }
-      if (!finalPrice) finalPrice = 2000;
-
-      // Parse deadline / date
-      const dateRaw = (r['date'] || r['deadline'] || r['發包日期'] || r['交期'] || '').trim();
-      let deadline = '';
-      if (dateRaw) {
-        const m1 = dateRaw.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
-        const m2 = dateRaw.match(/(\d{1,2})[\/\-](\d{1,2})$/);
-        if (m1) deadline = `${m1[1]}-${m1[2].padStart(2,'0')}-${m1[3].padStart(2,'0')}`;
-        else if (m2) {
-          const yr = new Date().getFullYear();
-          deadline = `${yr}-${m2[1].padStart(2,'0')}-${m2[2].padStart(2,'0')}`;
-        }
-      }
-
-      const statusRaw = (r['status'] || r['狀態'] || '').trim();
-      const noteRaw   = (r['note']   || r['備註'] || '').trim();
-
-      tasks.push({
-        id:        uid(),
-        name,
-        designer:  designerId,
-        type:      typeVal,
-        qty:       qtyVal,
-        unitprice: finalPrice,
-        priority:  'mid',
-        status:    resolveStatus(statusRaw),
-        revisions: 0,
-        progress:  0,
-        deadline,
-        note:      noteRaw,
-        createdAt: dateRaw || today(),
-        fromSheets: true,
-        uniqueKey,
-      });
-      added++;
-    }
-
-    save();
-    renderAll();
-    const now = new Date().toLocaleTimeString('zh-TW', {hour:'2-digit', minute:'2-digit'});
-    status.className = 'sync-status ok';
-    status.textContent = `✓ 同步完成 ${now} — 新增 ${added} 筆，略過 ${skipped} 筆`;
-    toast(`✓ 從 Sheets 匯入 ${added} 筆新任務`);
-
-  } catch (err) {
-    status.className = 'sync-status err';
-    status.textContent = `✗ 同步失敗：${err.message}`;
-    toast('✗ 同步失敗，請稍後再試');
-    console.error(err);
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '⬇ 從 Sheets 匯入';
-  }
-}
-
-// ─── CSV IMPORT ──────────────────────────────────────────────────────────────
-function importCSV(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const text = e.target.result;
-      const rows = parseCSV(text);
-      if (rows.length < 2) { toast('✗ CSV 沒有資料'); return; }
-
-      // 找「發包日期」所在的列當 header
-      let added = 0, skipped = 0;
-      let currentDesignerName = '';
-
-      for (let i = 0; i < rows.length; i++) {
-        const row = rows[i];
-        const first = (row[0] || '').trim();
-
-        // 偵測設計師名稱列（只有一個非空欄且不是日期也不是「發包日期」）
-        if (first && !first.includes('發包日期') && !first.match(/^\d{4}/) && row.filter(c=>c.trim()).length === 1) {
-          currentDesignerName = first;
-          continue;
-        }
-
-        // 跳過 header 列
-        if (first === '發包日期') continue;
-
-        // 有發包日期或有合作內容才處理
-        const nameVal = (row[2] || '').trim();
-        if (!nameVal) { skipped++; continue; }
-
-        const dateVal     = first;
-        const typeVal     = (row[1] || '').trim();
-        const priceVal    = (row[3] || '').replace(/[$,，＄]/g,'').trim();
-        const qtyVal      = (row[4] || '').replace(/[^\d]/g,'').trim();
-
-        const designerId  = resolveDesigner(currentDesignerName);
-
-        // Normalize type
-        let type = '上架包';
-        if (typeVal.includes('官網') || typeVal.includes('Banner')) type = '官網Banner';
-        else if (typeVal.includes('網購')) type = '網購Banner';
-        else if (typeVal.includes('×5') || typeVal.includes('X5') || typeVal.includes('x5')) type = '上架包×5';
-
-        const uniqueKey = `${designerId}|${nameVal}|${dateVal}`;
-        if (tasks.some(t => t.uniqueKey === uniqueKey)) { skipped++; continue; }
-
-        let price = parseInt(priceVal) || 0;
-        if (!price && designerId) {
-          const d = DESIGNERS.find(x => x.id === designerId);
-          price = d ? (d.rates[type] || 2000) : 2000;
-        }
-        if (!price) price = 2000;
-
-        // Parse date
-        let deadline = '';
-        const m = dateVal.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
-        if (m) deadline = `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
-
-        tasks.push({
-          id: uid(),
-          name: nameVal,
-          designer: designerId,
-          type,
-          qty: parseInt(qtyVal) || 1,
-          unitprice: price,
-          priority: 'mid',
-          status: 'pending',
-          revisions: 0,
-          progress: 0,
-          deadline,
-          note: '',
-          createdAt: deadline || today(),
-          fromSheets: true,
-          uniqueKey,
-        });
-        added++;
-      }
-
-      save(); renderAll();
-      const now = new Date().toLocaleTimeString('zh-TW', {hour:'2-digit', minute:'2-digit'});
-      document.getElementById('sync-status').className = 'sync-status ok';
-      document.getElementById('sync-status').textContent = `✓ CSV 匯入完成 ${now} — 新增 ${added} 筆，略過 ${skipped} 筆`;
-      toast(`✓ CSV 匯入 ${added} 筆新任務`);
-    } catch(err) {
-      toast('✗ CSV 解析失敗：' + err.message);
-      console.error(err);
-    }
-    input.value = ''; // reset so same file can be imported again
-  };
-  reader.readAsText(file, 'UTF-8');
-}
-
-// ─── COLUMN MAP MODAL ────────────────────────────────────────────────────────
-function openColMapModal() {
-  document.getElementById('cfg-sheet-id').value = syncConfig.sheetId || '';
-  document.getElementById('cfg-gid').value      = syncConfig.gid     || '0';
-  const c = syncConfig.cols;
-  document.getElementById('col-name').value      = c.name      || '';
-  document.getElementById('col-designer').value  = c.designer  || '';
-  document.getElementById('col-type').value      = c.type      || '';
-  document.getElementById('col-qty').value       = c.qty       || '';
-  document.getElementById('col-unitprice').value = c.unitprice || '';
-  document.getElementById('col-priority').value  = c.priority  || '';
-  document.getElementById('col-status').value    = c.status    || '';
-  document.getElementById('col-deadline').value  = c.deadline  || '';
-  document.getElementById('col-note').value      = c.note      || '';
-  document.getElementById('colmap-overlay').classList.add('show');
-}
-function closeColMapModal() {
-  document.getElementById('colmap-overlay').classList.remove('show');
-}
-function saveColMap() {
-  syncConfig = {
-    sheetId: document.getElementById('cfg-sheet-id').value.trim() || DEFAULT_CONFIG.sheetId,
-    gid:     document.getElementById('cfg-gid').value.trim() || '0',
-    cols: {
-      name:      document.getElementById('col-name').value.trim(),
-      designer:  document.getElementById('col-designer').value.trim(),
-      type:      document.getElementById('col-type').value.trim(),
-      qty:       document.getElementById('col-qty').value.trim(),
-      unitprice: document.getElementById('col-unitprice').value.trim(),
-      priority:  document.getElementById('col-priority').value.trim(),
-      status:    document.getElementById('col-status').value.trim(),
-      deadline:  document.getElementById('col-deadline').value.trim(),
-      note:      document.getElementById('col-note').value.trim(),
-    }
-  };
-  localStorage.setItem('jtl_sync_config', JSON.stringify(syncConfig));
-  closeColMapModal();
-  toast('✓ 欄位設定已儲存');
-}
-
-// ─── DESIGNERS ───────────────────────────────────────────────────────────────
-const DESIGNERS = [
-  { id: 'AMB', name: 'Amber',  role: '視覺設計', color: '#e8ff4a',
-    rates: { '上架包': 2000, '上架包×5': 1800, '官網Banner': 1200 } },
-  { id: 'EMM', name: 'Emma',   role: '電商設計', color: '#4affb4',
-    rates: { '上架包': 2000 } },
-  { id: 'DAP', name: '大P',    role: '視覺設計', color: '#ff6b4a',
-    rates: { '上架包': 2000, '官網Banner': 2000 } },
-  { id: 'YAC', name: '楊雅淳', role: '視覺設計', color: '#b47aff',
-    rates: { '官網Banner': 2000 } },
-  { id: 'VIV', name: 'Vivian', role: '品牌設計', color: '#ff7ab4',
-    rates: { '官網Banner': 2000 } },
-];
-
-// ─── STATE ───────────────────────────────────────────────────────────────────
-let tasks = JSON.parse(localStorage.getItem('jtl_dispatch_tasks') || '[]');
-let currentFilter   = 'all';
-let currentDesigner = 'all';
+// ── Data ──
+let tasks = JSON.parse(localStorage.getItem('jtl-tasks') || '[]');
+let currentStatus = 'all';
 let editingId = null;
 
-// Seed from Google Sheet data if empty
-if (tasks.length === 0) {
-  const d = (offset) => {
-    const dt = new Date(); dt.setDate(dt.getDate() + offset);
-    return dt.toISOString().split('T')[0];
-  };
-  tasks = [
-    { id: uid(), designer:'AMB', name:'Spigen Apple Watch Ultra Band WBF0 (黑) AMP10141', type:'上架包', qty:1, unitprice:2000, priority:'high', status:'inprogress', revisions:0, progress:50, deadline:d(5), note:'上架包×1', createdAt: '2026-05-14' },
-    { id: uid(), designer:'AMB', name:'Spigen Apple Watch Band 上架包 ×5', type:'上架包', qty:5, unitprice:1800, priority:'mid', status:'pending', revisions:0, progress:0, deadline:d(10), note:'上架包×5 優惠價', createdAt: '2026-05-14' },
-    { id: uid(), designer:'EMM', name:'Spigen Galaxy Buds4/4 Pro Rugged Armor (黑) ACS11200', type:'上架包', qty:1, unitprice:2000, priority:'high', status:'inprogress', revisions:0, progress:40, deadline:d(4), note:'', createdAt: '2026-05-14' },
-    { id: uid(), designer:'DAP', name:'Spigen Galaxy Buds4/4 Pro Lock Fit (黑) ACS11202', type:'上架包', qty:1, unitprice:2000, priority:'high', status:'inprogress', revisions:0, progress:30, deadline:d(4), note:'', createdAt: '2026-05-14' },
-    { id: uid(), designer:'DAP', name:'Spigen 6月活動 官網Banner', type:'官網Banner', qty:1, unitprice:2000, priority:'high', status:'pending', revisions:0, progress:0, deadline:d(14), note:'1視覺×4尺寸', createdAt: '2026-05-15' },
-    { id: uid(), designer:'VIV', name:'JTLEGEND 6月活動 官網Banner', type:'官網Banner', qty:6, unitprice:2000, priority:'high', status:'inprogress', revisions:0, progress:20, deadline:d(12), note:'', createdAt: '2026-05-15' },
-    { id: uid(), designer:'YAC', name:'New Coast 6月活動 官網Banner', type:'官網Banner', qty:4, unitprice:2000, priority:'mid', status:'pending', revisions:0, progress:0, deadline:d(12), note:'', createdAt: '2026-05-15' },
-  ];
-  save();
+// Quote data
+let quoteData = JSON.parse(localStorage.getItem('jtl-quote') || 'null') || {
+  cols: ['設計師', '上架包 ×1', '上架包 ×5', '官網Banner (1視覺×4尺寸)', '網購Banner (1視覺×13尺寸)'],
+  rows: [
+    ['Amber',   '$2,000', '$1,800', '$1,200', '—'],
+    ['Emma',    '$2,000', '待報價',  '—',      '—'],
+    ['大P',     '$2,000', '待報價',  '$2,000', '待報價'],
+    ['楊雅淳',  '—',      '—',       '$2,000', '待報價'],
+    ['Vivian',  '—',      '—',       '$2,000', '—'],
+  ]
+};
+
+let officialSpecs = JSON.parse(localStorage.getItem('jtl-official') || 'null') || [
+  { platform:'PChome', items:[{no:1,size:'1200×400'},{no:2,size:'1080×1920'},{no:3,size:'1200×628',note:'要LOGO'},{no:4,size:'1040×1040'}] },
+];
+let shopSpecs = JSON.parse(localStorage.getItem('jtl-shop') || 'null') || [
+  { platform:'PChome', items:[{no:1,size:'1080×1920',limit:'<20MB'},{no:2,size:'1644×604',limit:'<395KB'},{no:3,size:'462×462',limit:'<225KB'}] },
+  { platform:'Yahoo',  items:[{no:4,size:'1200×600',limit:'<300K'},{no:5,size:'950×464',limit:'<200K'},{no:6,size:'960×450',limit:'<200K'},{no:7,size:'1080×345',limit:'<200K'}] },
+  { platform:'博客來', items:[{no:8,size:'240×240'},{no:9,size:'950×250'},{no:10,size:'621×312'}] },
+  { platform:'MOMO',   items:[{no:11,size:'818×370',limit:'<150K'},{no:12,size:'1000×300',limit:'<150K'},{no:13,size:'852×426',limit:'<150K'}] },
+];
+
+// ── Tabs ──
+function switchTab(name, tabEl, navEl) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  if(tabEl){ document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); tabEl.classList.add('active'); }
+  if(navEl){ document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); navEl.classList.add('active'); }
+  if(name==='cost') renderCost();
+  if(name==='quote') renderQuote();
 }
 
-// ─── UTILS ───────────────────────────────────────────────────────────────────
-function uid() { return 't_' + Date.now() + '_' + Math.random().toString(36).slice(2,7); }
-function save() { localStorage.setItem('jtl_dispatch_tasks', JSON.stringify(tasks)); }
-function today() { return new Date().toISOString().split('T')[0]; }
-function daysLeft(deadline) {
-  const t = new Date(today()); t.setHours(0,0,0,0);
-  const d = new Date(deadline); d.setHours(0,0,0,0);
-  return Math.round((d - t) / 86400000);
-}
-function isOverdue(task) { return task.status !== 'done' && task.deadline && daysLeft(task.deadline) < 0; }
-function isThisWeek(deadline) { const n = daysLeft(deadline); return n >= 0 && n <= 7; }
-function getDesigner(id) { return DESIGNERS.find(d => d.id === id) || {}; }
-function fmtMoney(n) { return '$' + Number(n).toLocaleString(); }
+// ── Toast ──
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
 
-function statusLabel(s) {
-  return { pending:'待開始', inprogress:'進行中', review:'待審核', revision:'修改中', done:'已完成' }[s] || s;
-}
-function statusClass(s, task) {
-  if (isOverdue(task)) return 'badge-overdue';
-  return { pending:'badge-pending', inprogress:'badge-inprogress', review:'badge-review', revision:'badge-revision', done:'badge-done' }[s] || '';
-}
-function statusText(task) { return isOverdue(task) ? '逾期' : statusLabel(task.status); }
-
-function priorityHtml(p) {
-  const map = { high:['HIGH','var(--danger)'], mid:['MID','var(--warning)'], low:['LOW','var(--muted)'] };
-  const [label, color] = map[p] || map.mid;
-  return `<span class="priority" style="color:${color}">${label}</span>`;
-}
-function deadlineHtml(deadline) {
-  if (!deadline) return '<span class="deadline ok">—</span>';
-  const n = daysLeft(deadline);
-  let cls = 'ok', txt = deadline;
-  if (n < 0)      { cls = 'overdue';  txt = deadline + ` (逾期${Math.abs(n)}天)`; }
-  else if (n <= 3){ cls = 'due-soon'; txt = deadline + ` (剩${n}天)`; }
-  return `<span class="deadline ${cls}">${txt}</span>`;
+// ── Stats ──
+function updateStats(){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const overdue = tasks.filter(t=>t.status!=='已完成'&&t.deadline&&new Date(t.deadline)<today).length;
+  const inProg  = tasks.filter(t=>t.status==='進行中').length;
+  const thisMonth = new Date(); const m=thisMonth.getMonth(), y=thisMonth.getFullYear();
+  const cost = tasks.filter(t=>{
+    if(!t.deadline) return false;
+    const d=new Date(t.deadline); return d.getMonth()===m&&d.getFullYear()===y;
+  }).reduce((a,t)=>(t.price&&t.qty?a+t.price*t.qty:a),0);
+  document.getElementById('statTotal').textContent = tasks.length;
+  document.getElementById('statProgress').textContent = inProg;
+  document.getElementById('statOverdue').textContent = overdue;
+  document.getElementById('statCost').textContent = '$'+cost.toLocaleString();
+  // Filter chips
+  const statuses = ['待開始','進行中','待審核','修改中','已完成'];
+  document.getElementById('fc-all').textContent = tasks.length;
+  statuses.forEach(s=>{ const el=document.getElementById('fc-'+s); if(el) el.textContent=tasks.filter(t=>t.status===s).length; });
+  document.getElementById('fc-逾期').textContent = overdue;
 }
 
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
-}
+// ── Status badge ──
+const badgeMap = {'待開始':'badge-pending','進行中':'badge-progress','待審核':'badge-review','修改中':'badge-revision','已完成':'badge-done','逾期':'badge-overdue'};
+function statusBadge(s){ return `<span class="badge ${badgeMap[s]||'badge-pending'}">${s}</span>`; }
+function priorityDot(p){ const cls={高:'pri-high',中:'pri-mid',低:'pri-low'}; return `<span class="priority-dot ${cls[p]||'pri-mid'}"></span>`; }
 
-// ─── TAB ─────────────────────────────────────────────────────────────────────
-function switchTab(tab, btn) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
-  btn.classList.add('active');
-  if (tab === 'cost') renderCost();
-}
+// ── Render table ──
+function renderTable(){
+  const today=new Date(); today.setHours(0,0,0,0);
+  const designer=document.getElementById('designerFilter').value;
+  let list = tasks.map((t,i)=>({...t,_i:i}));
+  if(currentStatus==='逾期')
+    list=list.filter(t=>t.status!=='已完成'&&t.deadline&&new Date(t.deadline)<today);
+  else if(currentStatus!=='all')
+    list=list.filter(t=>t.status===currentStatus);
+  if(designer) list=list.filter(t=>t.designer===designer);
 
-// ─── RENDER ──────────────────────────────────────────────────────────────────
-function getFiltered() {
-  const q = (document.getElementById('search-input')?.value || '').toLowerCase();
-  return tasks.filter(t => {
-    if (currentDesigner !== 'all' && t.designer !== currentDesigner) return false;
-    if (currentFilter === 'overdue') { if (!isOverdue(t)) return false; }
-    else if (currentFilter !== 'all' && t.status !== currentFilter) return false;
-    if (q && !t.name.toLowerCase().includes(q) && !t.type.toLowerCase().includes(q)) return false;
-    return true;
-  });
-}
-
-function renderAll() {
-  renderSidebar();
-  renderSummary();
-  renderTable();
-  renderUpcoming();
-  updateHeaderStats();
-}
-
-function renderSidebar() {
-  const list = document.getElementById('designer-list');
-  list.innerHTML = `
-    <div class="designer-item ${currentDesigner==='all'?'active':''}" onclick="setDesigner('all')">
-      <div class="designer-avatar" style="background:#222;color:#888">ALL</div>
-      <div class="designer-info">
-        <div class="designer-name">全部設計師</div>
-        <div class="designer-sub">所有任務</div>
-      </div>
-      <span class="designer-count">${tasks.length}</span>
-    </div>
-  ` + DESIGNERS.map(d => {
-    const cnt = tasks.filter(t => t.designer === d.id).length;
-    return `
-      <div class="designer-item ${currentDesigner===d.id?'active':''}" onclick="setDesigner('${d.id}')">
-        <div class="designer-avatar" style="background:${d.color}22;color:${d.color}">${d.name[0]}</div>
-        <div class="designer-info">
-          <div class="designer-name">${d.name}</div>
-          <div class="designer-sub">${d.role}</div>
-        </div>
-        <span class="designer-count">${cnt}</span>
-      </div>
-    `;
-  }).join('');
-}
-
-function renderSummary() {
-  const base = currentDesigner === 'all' ? tasks : tasks.filter(t => t.designer === currentDesigner);
-  const done = base.filter(t => t.status === 'done').length;
-  const qty  = base.reduce((s, t) => s + (Number(t.qty) || 0), 0);
-  const weekDue = base.filter(t => t.deadline && isThisWeek(t.deadline) && t.status !== 'done').length;
-  const rate = base.length ? Math.round(done / base.length * 100) : 0;
-
-  document.getElementById('s-total').textContent = base.length;
-  document.getElementById('s-qty').textContent   = qty;
-  document.getElementById('s-week').textContent  = weekDue;
-  document.getElementById('s-rate').textContent  = rate + '%';
-
-  const all = tasks.filter(t => currentDesigner === 'all' || t.designer === currentDesigner);
-  document.getElementById('fc-all').textContent      = all.length;
-  document.getElementById('fc-pending').textContent  = all.filter(t=>t.status==='pending').length;
-  document.getElementById('fc-inprogress').textContent = all.filter(t=>t.status==='inprogress').length;
-  document.getElementById('fc-review').textContent   = all.filter(t=>t.status==='review').length;
-  document.getElementById('fc-revision').textContent = all.filter(t=>t.status==='revision').length;
-  document.getElementById('fc-done').textContent     = all.filter(t=>t.status==='done').length;
-  document.getElementById('fc-overdue').textContent  = all.filter(t=>isOverdue(t)).length;
-}
-
-function renderTable() {
-  const filtered = getFiltered();
-  const tbody = document.getElementById('task-tbody');
-  const empty = document.getElementById('empty-state');
-
-  if (filtered.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
-  empty.style.display = 'none';
-
-  filtered.sort((a, b) => {
-    if (isOverdue(a) && !isOverdue(b)) return -1;
-    if (!isOverdue(a) && isOverdue(b)) return 1;
-    return (a.deadline||'9999') < (b.deadline||'9999') ? -1 : 1;
-  });
-
-  tbody.innerHTML = filtered.map(t => {
-    const d = getDesigner(t.designer);
-    const rev = t.revisions || 0;
-    const revColor = rev === 0 ? 'var(--muted)' : rev <= 2 ? '#ffaa4a' : 'var(--danger)';
-    const statuses = ['pending','inprogress','review','revision','done'];
-    const statusOptions = statuses.map(s =>
-      `<option value="${s}" ${t.status===s?'selected':''}>${statusLabel(s)}</option>`
-    ).join('');
-    return `
-      <tr>
-        <td style="font-weight:500;max-width:200px">
-          <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.name}</div>
-          ${t.note ? `<div style="font-size:10px;color:var(--muted);margin-top:2px">${t.note}</div>` : ''}
-        </td>
-        <td>
-          <div class="designer-chip">
-            <span class="chip-dot" style="background:${d.color}"></span>
-            <span>${d.name || '—'}</span>
-          </div>
-        </td>
-        <td style="color:var(--muted);font-size:12px">${t.type}</td>
-        <td style="font-family:'Space Mono',monospace;font-weight:700">${t.qty}</td>
-        <td>${priorityHtml(t.priority)}</td>
-        <td>
-          <select class="inline-status-select ${isOverdue(t)?'badge-overdue':''}" onchange="changeStatus('${t.id}',this.value)">
-            ${statusOptions}
-          </select>
-        </td>
-        <td>
-          <div style="display:flex;align-items:center;gap:4px">
-            <button class="btn-rev btn-rev-minus" onclick="addRevision('${t.id}',-1)" title="修改次數-1">−</button>
-            <span style="font-family:'Space Mono',monospace;font-size:12px;color:${revColor};min-width:24px;text-align:center">${rev}</span>
-            <button class="btn-rev" onclick="addRevision('${t.id}',1)" title="修改次數+1">＋</button>
-          </div>
-        </td>
-        <td>${deadlineHtml(t.deadline)}</td>
-        <td>
-          <div style="display:flex;gap:5px">
-            <button class="btn btn-secondary btn-sm" onclick="openEdit('${t.id}')">編輯</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteTask('${t.id}')">刪除</button>
-          </div>
-        </td>
-      </tr>
-    `;
-  }).join('');
-}
-
-function renderUpcoming() {
-  const upcoming = tasks
-    .filter(t => t.deadline && t.status !== 'done' && daysLeft(t.deadline) >= 0 && daysLeft(t.deadline) <= 7)
-    .sort((a, b) => a.deadline < b.deadline ? -1 : 1)
-    .slice(0, 5);
-
-  const el = document.getElementById('upcoming-list');
-  if (!upcoming.length) { el.innerHTML = '<span>近7天無交期</span>'; return; }
-  el.innerHTML = upcoming.map(t => {
-    const d = getDesigner(t.designer);
-    const n = daysLeft(t.deadline);
-    const color = n <= 1 ? 'var(--danger)' : n <= 3 ? 'var(--warning)' : 'var(--muted)';
-    return `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)">
-      <span style="color:${d.color}">●</span>
-      <span style="flex:1;margin:0 6px;color:var(--text)">${t.name.slice(0,14)}${t.name.length>14?'…':''}</span>
-      <span style="color:${color};font-family:'Space Mono',monospace">+${n}d</span>
-    </div>`;
-  }).join('');
-}
-
-function updateHeaderStats() {
-  const total = tasks.reduce((s,t) => s + (t.unitprice||0) * (t.qty||1), 0);
-  document.getElementById('hdr-total').textContent      = tasks.length;
-  document.getElementById('hdr-inprogress').textContent = tasks.filter(t=>t.status==='inprogress').length;
-  document.getElementById('hdr-overdue').textContent    = tasks.filter(t=>isOverdue(t)).length;
-  document.getElementById('hdr-cost').textContent       = fmtMoney(total);
-}
-
-// ─── COST TAB ────────────────────────────────────────────────────────────────
-function renderCost() {
-  const now = new Date();
-  document.getElementById('cost-month').textContent = `${now.getFullYear()}年${now.getMonth()+1}月`;
-
-  let grandTotal = 0;
-  let doneCount  = 0;
-
-  const cards = DESIGNERS.map(d => {
-    const dt = tasks.filter(t => t.designer === d.id);
-    const doneTasks = dt.filter(t => t.status === 'done');
-    const totalCost = dt.reduce((s, t) => s + (t.unitprice||0) * (t.qty||1), 0);
-    const doneCost  = doneTasks.reduce((s, t) => s + (t.unitprice||0) * (t.qty||1), 0);
-    const totalRevs = dt.reduce((s, t) => s + (t.revisions||0), 0);
-    grandTotal += totalCost;
-    doneCount  += doneTasks.length;
-
-    const initials = d.name[0];
-    return `
-      <div class="cost-card">
-        <div class="cost-card-header">
-          <div class="cost-avatar" style="background:${d.color}22;color:${d.color}">${initials}</div>
-          <div>
-            <div class="cost-name">${d.name}</div>
-            <div class="cost-role">${d.role}</div>
-          </div>
-        </div>
-        <div class="cost-row"><span class="cost-row-label">任務總數</span><span class="cost-row-value">${dt.length} 件</span></div>
-        <div class="cost-row"><span class="cost-row-label">進行中</span><span class="cost-row-value">${dt.filter(t=>t.status==='inprogress').length} 件</span></div>
-        <div class="cost-row"><span class="cost-row-label">已完成</span><span class="cost-row-value" style="color:var(--success)">${doneTasks.length} 件</span></div>
-        <div class="cost-row"><span class="cost-row-label">修改次數合計</span><span class="cost-row-value" style="color:${totalRevs>5?'var(--danger)':'var(--muted)'}">${totalRevs} 次</span></div>
-        <div class="cost-row"><span class="cost-row-label">已完成費用</span><span class="cost-row-value">${fmtMoney(doneCost)}</span></div>
-        <div class="cost-total">
-          <span class="cost-total-label">全部任務費用</span>
-          <span class="cost-total-value">${fmtMoney(totalCost)}</span>
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  document.getElementById('cost-cards').innerHTML = cards;
-  document.getElementById('cost-grand-total').textContent = fmtMoney(grandTotal);
-  document.getElementById('cost-done-count').textContent  = doneCount + ' 件';
-}
-
-// ─── FILTER ──────────────────────────────────────────────────────────────────
-function setFilter(f, btn) {
-  currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderTable();
-}
-function setDesigner(id) { currentDesigner = id; renderAll(); }
-
-// ─── REVISION ────────────────────────────────────────────────────────────────
-function addRevision(id, delta) {
-  tasks = tasks.map(t => {
-    if (t.id !== id) return t;
-    const newRev = Math.max(0, (t.revisions||0) + delta);
-    const newStatus = delta > 0 && t.status === 'review' ? 'revision' : t.status;
-    return { ...t, revisions: newRev, status: newStatus };
-  });
-  save(); renderAll();
-  toast(delta > 0 ? '✓ 修改次數 +1' : '✓ 修改次數 -1');
-}
-
-// ─── INLINE STATUS CHANGE ────────────────────────────────────────────────────
-function changeStatus(id, newStatus) {
-  tasks = tasks.map(t => t.id === id ? { ...t, status: newStatus } : t);
-  save(); renderSidebar(); renderSummary(); renderUpcoming(); updateHeaderStats();
-  toast(`✓ 狀態更新為「${statusLabel(newStatus)}」`);
-}
-
-// ─── MODAL ───────────────────────────────────────────────────────────────────
-function populateDesignerSelect() {
-  const sel = document.getElementById('f-designer');
-  sel.innerHTML = '<option value="">選擇設計師</option>' +
-    DESIGNERS.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
-}
-
-// Auto-fill unit price when designer+type changes
-function autoFillPrice() {
-  const did  = document.getElementById('f-designer').value;
-  const type = document.getElementById('f-type').value;
-  const d    = DESIGNERS.find(x => x.id === did);
-  if (!d) return;
-  const price = d.rates[type] || d.rates['上架包'] || 2000;
-  document.getElementById('f-unitprice').value = price;
-}
-
-function openModal() {
-  editingId = null;
-  document.getElementById('modal-title').textContent = '新增發包任務';
-  document.getElementById('f-name').value     = '';
-  document.getElementById('f-designer').value = currentDesigner !== 'all' ? currentDesigner : '';
-  document.getElementById('f-type').value     = '上架包';
-  document.getElementById('f-qty').value      = 1;
-  document.getElementById('f-unitprice').value= 2000;
-  document.getElementById('f-priority').value = 'mid';
-  document.getElementById('f-status').value   = 'pending';
-  document.getElementById('f-progress').value = 0;
-  document.getElementById('f-deadline').value = '';
-  document.getElementById('f-note').value     = '';
-  document.getElementById('modal-overlay').classList.add('show');
-}
-
-function openEdit(id) {
-  editingId = id;
-  const t = tasks.find(x => x.id === id);
-  if (!t) return;
-  document.getElementById('modal-title').textContent = '編輯任務';
-  document.getElementById('f-name').value     = t.name;
-  document.getElementById('f-designer').value = t.designer;
-  document.getElementById('f-type').value     = t.type;
-  document.getElementById('f-qty').value      = t.qty;
-  document.getElementById('f-unitprice').value= t.unitprice || 2000;
-  document.getElementById('f-priority').value = t.priority;
-  document.getElementById('f-status').value   = t.status;
-  document.getElementById('f-progress').value = t.progress;
-  document.getElementById('f-deadline').value = t.deadline || '';
-  document.getElementById('f-note').value     = t.note || '';
-  document.getElementById('modal-overlay').classList.add('show');
-}
-
-function closeModal() { document.getElementById('modal-overlay').classList.remove('show'); }
-
-function saveTask() {
-  const name = document.getElementById('f-name').value.trim();
-  if (!name) { alert('請輸入任務名稱'); return; }
-  const task = {
-    id: editingId || uid(),
-    name,
-    designer:  document.getElementById('f-designer').value,
-    type:      document.getElementById('f-type').value,
-    qty:       Number(document.getElementById('f-qty').value) || 1,
-    unitprice: Number(document.getElementById('f-unitprice').value) || 2000,
-    priority:  document.getElementById('f-priority').value,
-    status:    document.getElementById('f-status').value,
-    progress:  Math.min(100, Math.max(0, Number(document.getElementById('f-progress').value) || 0)),
-    deadline:  document.getElementById('f-deadline').value,
-    note:      document.getElementById('f-note').value.trim(),
-    revisions: editingId ? (tasks.find(t=>t.id===editingId)?.revisions || 0) : 0,
-    createdAt: editingId ? (tasks.find(t=>t.id===editingId)?.createdAt || today()) : today(),
-  };
-  if (editingId) {
-    tasks = tasks.map(t => t.id === editingId ? task : t);
-    toast('✓ 任務已更新');
-  } else {
-    tasks.push(task);
-    toast('✓ 任務已新增');
+  const tbody=document.getElementById('taskBody');
+  if(!list.length){
+    tbody.innerHTML=`<tr><td colspan="9"><div class="empty-state"><div class="icon">📭</div><p>目前沒有符合條件的任務</p></div></td></tr>`;
+    return;
   }
-  save(); closeModal(); renderAll();
+  tbody.innerHTML = list.map(t=>{
+    const od = t.status!=='已完成'&&t.deadline&&new Date(t.deadline)<today;
+    const dStr = t.deadline ? new Date(t.deadline).toLocaleDateString('zh-TW',{month:'2-digit',day:'2-digit'}) : '—';
+    return `<tr class="${od?'overdue':''}">
+      <td><div class="task-name">${t.name}</div>${t.note?`<div class="task-note">${t.note}</div>`:''}</td>
+      <td>${t.designer||'—'}</td>
+      <td>${t.type||'—'}</td>
+      <td>${t.qty||1}</td>
+      <td>${priorityDot(t.priority)} ${t.priority||'中'}</td>
+      <td>${statusBadge(od?'逾期':t.status)}</td>
+      <td style="text-align:center">${t.revisions||0}</td>
+      <td style="color:${od?'var(--red)':'var(--text2)'}">${dStr}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="editTask(${t._i})">編輯</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteTask(${t._i})">刪除</button>
+      </td>
+    </tr>`;
+  }).join('');
 }
 
-function deleteTask(id) {
-  if (!confirm('確定要刪除此任務？')) return;
-  tasks = tasks.filter(t => t.id !== id);
-  save(); toast('任務已刪除'); renderAll();
+// ── Filter ──
+function filterStatus(s, el){
+  currentStatus=s;
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderTable();
 }
 
-// ─── INIT ────────────────────────────────────────────────────────────────────
-document.getElementById('modal-overlay').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
-document.getElementById('colmap-overlay').addEventListener('click', function(e) {
-  if (e.target === this) closeColMapModal();
-});
-document.getElementById('f-designer').addEventListener('change', autoFillPrice);
-document.getElementById('f-type').addEventListener('change', autoFillPrice);
-populateDesignerSelect();
-renderAll();
+// ── Drawer ──
+function openDrawer(){ editingId=null; document.getElementById('drawerTitle').textContent='新增發包任務'; clearForm(); document.getElementById('drawerOverlay').classList.add('open'); document.getElementById('drawer').classList.add('open'); }
+function closeDrawer(){ document.getElementById('drawerOverlay').classList.remove('open'); document.getElementById('drawer').classList.remove('open'); }
+function clearForm(){ ['f-name','f-designer','f-type','f-qty','f-price','f-priority','f-status','f-progress','f-deadline','f-note'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=el.tagName==='SELECT'?el.options[0]?.value||'':el.type==='number'?'':el.type==='range'?0:''; }); document.getElementById('f-prog-val').textContent='0%'; }
+
+function saveTask(){
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){ toast('❌ 請填入任務名稱'); return; }
+  const task={
+    name, designer:document.getElementById('f-designer').value,
+    type:document.getElementById('f-type').value,
+    qty:+document.getElementById('f-qty').value||1,
+    price:+document.getElementById('f-price').value||0,
+    priority:document.getElementById('f-priority').value,
+    status:document.getElementById('f-status').value,
+    progress:+document.getElementById('f-progress').value,
+    deadline:document.getElementById('f-deadline').value,
+    note:document.getElementById('f-note').value,
+    revisions:editingId!==null?(tasks[editingId].revisions||0):0
+  };
+  if(editingId!==null){ tasks[editingId]=task; toast('✅ 任務已更新'); }
+  else{ tasks.push(task); toast('✅ 任務已新增'); }
+  save(); closeDrawer(); renderTable(); updateStats();
+}
+
+function editTask(i){
+  editingId=i; const t=tasks[i];
+  document.getElementById('drawerTitle').textContent='編輯任務';
+  document.getElementById('f-name').value=t.name||'';
+  document.getElementById('f-designer').value=t.designer||'';
+  document.getElementById('f-type').value=t.type||'上架包';
+  document.getElementById('f-qty').value=t.qty||1;
+  document.getElementById('f-price').value=t.price||'';
+  document.getElementById('f-priority').value=t.priority||'中';
+  document.getElementById('f-status').value=t.status||'待開始';
+  document.getElementById('f-progress').value=t.progress||0;
+  document.getElementById('f-prog-val').textContent=(t.progress||0)+'%';
+  document.getElementById('f-deadline').value=t.deadline||'';
+  document.getElementById('f-note').value=t.note||'';
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+}
+
+function deleteTask(i){ if(!confirm('確定刪除此任務？')) return; tasks.splice(i,1); save(); renderTable(); updateStats(); toast('🗑 任務已刪除'); }
+function save(){ localStorage.setItem('jtl-tasks',JSON.stringify(tasks)); }
+
+// ── Cost ──
+function renderCost(){
+  const done=tasks.filter(t=>t.status==='已完成').length;
+  const total=tasks.reduce((a,t)=>a+(t.price*t.qty||0),0);
+  const rate=tasks.length?Math.round(done/tasks.length*100):0;
+  document.getElementById('costTotal').textContent='$'+total.toLocaleString();
+  document.getElementById('costDone').textContent=done+' 件';
+  document.getElementById('costRate').textContent=rate+'%';
+  const designers=['Amber','Emma','大P','楊雅淳','Vivian'];
+  const el=document.getElementById('designerCosts');
+  el.innerHTML=designers.map(d=>{
+    const dt=tasks.filter(t=>t.designer===d);
+    const amt=dt.reduce((a,t)=>a+(t.price*t.qty||0),0);
+    const dc=dt.filter(t=>t.status==='已完成').length;
+    return `<div class="designer-row"><div><div class="designer-name">${d}</div><div class="designer-stats">共 ${dt.length} 件 · 完成 ${dc} 件</div></div><div class="designer-amount">$${amt.toLocaleString()}</div></div>`;
+  }).join('');
+}
+
+// ── Quote Table ──
+function renderQuote(){
+  // Header
+  const thead=document.getElementById('quoteHead');
+  thead.innerHTML='<tr>'+quoteData.cols.map((c,i)=>`<th style="text-align:${i?'center':'left'}">${c}<button class="add-col-btn" style="font-size:12px;margin-left:4px" onclick="delQuoteCol(${i})" title="刪除此欄">×</button></th>`).join('')+'<th></th></tr>';
+  // Body
+  const tbody=document.getElementById('quoteBody');
+  tbody.innerHTML=quoteData.rows.map((row,ri)=>`<tr>
+    ${row.map((cell,ci)=>`<td style="text-align:${ci?'center':'left'}"><input class="editable-cell" value="${cell}" onchange="quoteData.rows[${ri}][${ci}]=this.value" ${ci===0?'style="text-align:left;font-weight:500"':''}></td>`).join('')}
+    <td><button class="del-row-btn" onclick="delQuoteRow(${ri})">✕</button></td>
+  </tr>`).join('');
+
+  // Spec grids
+  renderSpecGrid('officialSpecGrid', officialSpecs);
+  renderSpecGrid('shopSpecGrid', shopSpecs);
+}
+
+function renderSpecGrid(id, data){
+  const el=document.getElementById(id);
+  el.innerHTML=data.map((platform,pi)=>`
+    <div class="spec-card">
+      <div class="spec-card-header">
+        <input class="editable-cell" style="font-size:13px;font-weight:600;text-align:left;background:transparent" value="${platform.platform}" onchange="data[${pi}].platform=this.value">
+        <button class="del-row-btn" style="opacity:1" onclick="delPlatform('${id}',${pi})">✕</button>
+      </div>
+      <table>
+        ${platform.items.map((item,ii)=>`<tr>
+          <td><input class="editable-cell" style="text-align:center;width:30px" value="${item.no}" onchange="data[${pi}].items[${ii}].no=this.value"></td>
+          <td><input class="editable-cell" style="text-align:left" value="${item.size}" onchange="data[${pi}].items[${ii}].size=this.value"></td>
+          <td><input class="editable-cell" style="text-align:left;color:var(--text3)" value="${item.limit||item.note||''}" placeholder="限制/備註" onchange="data[${pi}].items[${ii}].limit=this.value"></td>
+          <td><button class="del-row-btn" style="opacity:1" onclick="delSpecRow('${id}',${pi},${ii})">✕</button></td>
+        </tr>`).join('')}
+        <tr><td colspan="4" style="text-align:center;padding:6px"><button class="add-row-btn" onclick="addSpecItemRow('${id}',${pi})">＋</button></td></tr>
+      </table>
+    </div>`).join('');
+}
+
+function addQuoteRow(){
+  const empty=Array(quoteData.cols.length).fill('—');
+  empty[0]='新設計師'; quoteData.rows.push(empty); renderQuote();
+}
+function addQuoteCol(){
+  const name=prompt('新品項名稱：',''); if(!name) return;
+  quoteData.cols.push(name);
+  quoteData.rows.forEach(r=>r.push('待報價'));
+  renderQuote();
+}
+function delQuoteCol(ci){ if(quoteData.cols.length<=1) return; quoteData.cols.splice(ci,1); quoteData.rows.forEach(r=>r.splice(ci,1)); renderQuote(); }
+function delQuoteRow(ri){ quoteData.rows.splice(ri,1); renderQuote(); }
+function saveQuote(){
+  localStorage.setItem('jtl-quote',JSON.stringify(quoteData));
+  localStorage.setItem('jtl-official',JSON.stringify(officialSpecs));
+  localStorage.setItem('jtl-shop',JSON.stringify(shopSpecs));
+  toast('✅ 報價規格已儲存');
+}
+
+function addSpecRow(type){
+  const name=prompt('平台名稱：',''); if(!name) return;
+  const data = type==='official'?officialSpecs:shopSpecs;
+  data.push({platform:name, items:[]});
+  renderQuote();
+}
+function delPlatform(gridId, pi){
+  if(gridId==='officialSpecGrid') officialSpecs.splice(pi,1);
+  else shopSpecs.splice(pi,1);
+  renderQuote();
+}
+function addSpecItemRow(gridId, pi){
+  const data = gridId==='officialSpecGrid'?officialSpecs:shopSpecs;
+  const no=(data[pi].items.length+1);
+  data[pi].items.push({no,size:'',limit:''});
+  renderQuote();
+}
+function delSpecRow(gridId, pi, ii){
+  const data = gridId==='officialSpecGrid'?officialSpecs:shopSpecs;
+  data[pi].items.splice(ii,1);
+  renderQuote();
+}
+
+// ── Settings ──
+function openSettings(){ document.getElementById('settingsOverlay').classList.add('open'); document.getElementById('settingsDrawer').classList.add('open'); }
+function closeSettings(){ document.getElementById('settingsOverlay').classList.remove('open'); document.getElementById('settingsDrawer').classList.remove('open'); }
+function saveSettings(){ toast('✅ 設定已儲存'); closeSettings(); }
+
+// ── Sheets sync (stub) ──
+function syncSheets(){ toast('⏳ 正在從 Sheets 同步…'); setTimeout(()=>toast('✅ 同步完成（請設定 Sheets ID）'),1500); }
+function importCSV(){ toast('📂 請選擇 CSV 檔案'); }
+
+// ── Init ──
+updateStats();
+renderTable();
 </script>
 </body>
 </html>
